@@ -39,12 +39,15 @@ class _RecipeCardState extends State<RecipeCard> {
             // Full background logo watermark
             Positioned.fill(
               child: Opacity(
-                opacity: 0.035,
-                child: Image.asset(
-                  'assets/images/logo_preppro_blue.png',
-                  fit: BoxFit.cover,
-                  alignment: Alignment.center,
-                  errorBuilder: (_, __, ___) => const SizedBox(),
+                opacity: 0.05,
+                child: Transform.scale(
+                  scale: 0.6,
+                  child: Image.asset(
+                    'assets/images/PrepProBlue.png',
+                    fit: BoxFit.cover,
+                    alignment: Alignment.center,
+                    errorBuilder: (_, __, ___) => const SizedBox(),
+                  ),
                 ),
               ),
             ),

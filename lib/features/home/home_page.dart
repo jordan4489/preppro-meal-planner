@@ -62,7 +62,7 @@ class _HomePageState extends State<HomePage> {
           onPressed: () => context.go('/home'),
         ),
         centerTitle: true,
-        title: Image.asset('assets/images/logo_preppro_blue.png', height: 42, errorBuilder: (_, __, ___) => const Text('PrepPro')),
+        title: Image.asset('assets/images/PrepProBlue.png', height: 42, errorBuilder: (_, __, ___) => const Text('PrepPro')),
         actions: [
           IconButton(onPressed: () => context.go('/profile'), icon: const Icon(Icons.person), tooltip: 'Profile'),
           IconButton(onPressed: () {}, icon: const Icon(Icons.notifications))
@@ -73,12 +73,15 @@ class _HomePageState extends State<HomePage> {
           // Full background logo watermark
           Positioned.fill(
             child: Opacity(
-              opacity: 0.035,
-              child: Image.asset(
-                'assets/images/logo_preppro_blue.png',
-                fit: BoxFit.cover,
-                alignment: Alignment.center,
-                errorBuilder: (_, __, ___) => const SizedBox(),
+              opacity: 0.05,
+              child: Transform.scale(
+                scale: 0.6,
+                child: Image.asset(
+                  'assets/images/PrepProBlue.png',
+                  fit: BoxFit.cover,
+                  alignment: Alignment.center,
+                  errorBuilder: (_, __, ___) => const SizedBox(),
+                ),
               ),
             ),
           ),

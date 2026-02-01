@@ -1,7 +1,6 @@
 
 flutter_launcher_icons:
-  android: true
+  android: "launcher_prep"
   ios: true
-  image_path: "assets/images/logo_icon_foreground.png"
-  adaptive_icon_background: "#2090D0"
-  adaptive_icon_foreground: "assets/images/logo_icon_foreground.png"
+  image_path: "assets/images/PrepProBlue.png"
+  remove_alpha_ios: true
