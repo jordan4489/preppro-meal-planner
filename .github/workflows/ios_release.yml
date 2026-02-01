@@ -1,0 +1,40 @@
+name: iOS Release
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  build_and_upload:
+    runs-on: macos-latest
+    env:
+      APP_IDENTIFIER: com.example.preppro
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 'stable'
+      - name: Install Ruby and Bundler
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.2'
+      - name: Install dependencies
+        run: |
+          flutter pub get
+          bundle install || gem install fastlane
+      - name: Decode App Store Connect API key
+        if: ${{ secrets.APP_STORE_CONNECT_API_KEY != '' }}
+        run: |
+          mkdir -p fastlane
+          echo "${{ secrets.APP_STORE_CONNECT_API_KEY }}" | base64 --decode > fastlane/AuthKey_${{ secrets.APP_STORE_CONNECT_KEY_ID }}.p8
+          echo "Wrote fastlane/AuthKey_${{ secrets.APP_STORE_CONNECT_KEY_ID }}.p8"
+      - name: Build IPA and upload to TestFlight (Fastlane)
+        env:
+          APP_STORE_CONNECT_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+          APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+          APP_IDENTIFIER: ${{ secrets.APP_IDENTIFIER }}
+        run: |
+          bundle exec fastlane beta

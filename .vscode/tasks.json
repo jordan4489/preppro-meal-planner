@@ -1,0 +1,35 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Flutter: pub get",
+			"type": "shell",
+			"command": "flutter pub get",
+			"isBackground": false
+		},
+		{
+			"label": "Flutter: analyze",
+			"type": "shell",
+			"command": "flutter analyze",
+			"isBackground": false
+		},
+		{
+			"label": "Flutter: devices",
+			"type": "shell",
+			"command": "flutter devices",
+			"isBackground": false
+		},
+		{
+			"label": "Flutter: run",
+			"type": "shell",
+			"command": "flutter run",
+			"isBackground": true
+		},
+		{
+			"label": "Flutter: analyze",
+			"type": "shell",
+			"command": "flutter analyze",
+			"isBackground": false
+		}
+	]
+}

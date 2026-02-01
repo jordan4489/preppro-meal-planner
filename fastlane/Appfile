@@ -1,0 +1,2 @@
+app_identifier("com.example.preppro") # Your bundle identifier
+apple_id("you@example.com") # Your Apple ID

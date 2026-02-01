@@ -1,0 +1,18 @@
+default_platform(:ios)
+
+platform :ios do
+  desc "Build and upload to TestFlight"
+  lane :beta do
+    api_key = app_store_connect_api_key(
+      key_id: ENV['APP_STORE_CONNECT_KEY_ID'],
+      issuer_id: ENV['APP_STORE_CONNECT_ISSUER_ID'],
+      key_filepath: Dir.glob('fastlane/AuthKey_*.p8').first || 'fastlane/AuthKey.p8'
+    )
+
+    # Build the app (uses default scheme 'Runner' by default)
+    build_app(scheme: ENV['IOS_SCHEME'] || 'Runner')
+
+    # Upload to TestFlight
+    upload_to_testflight(api_key: api_key)
+  end
+end

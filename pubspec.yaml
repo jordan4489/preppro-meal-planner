@@ -1,0 +1,30 @@
+
+name: preppro
+description: PrepPro — Mobile Blue-Pro (Patched)
+publish_to: "none"
+
+environment:
+  sdk: ">=3.0.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  go_router: ^14.2.1
+  shared_preferences: ^2.2.3
+  google_fonts: ^5.0.0
+  fl_chart: ^1.1.1
+  sentry_flutter: ^7.14.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_native_splash: ^2.4.1
+  flutter_launcher_icons: ^0.13.1
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/data/preppro_500_recipes.json
+    - assets/images/logo_preppro_blue.png
+    - assets/images/logo_icon_foreground.png
+    - assets/images/recipes/
