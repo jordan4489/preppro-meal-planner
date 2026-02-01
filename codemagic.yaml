@@ -1,0 +1,92 @@
+workflows:
+  ios-build:
+    name: iOS Build & Test
+    instance_type: mac_mini_m2
+    environment:
+      ios_signing:
+        distribution_type: ad_hoc
+        bundle_identifier: com.preppro.app
+      vars:
+        XCODE_WORKSPACE: "ios/Runner.xcworkspace"
+        XCODE_SCHEME: "Runner"
+        FLUTTER_VERSION: "stable"
+    triggering:
+      events:
+        - push
+        - pull_request
+      branch:
+        include_patterns:
+          - main
+          - develop
+    scripts:
+      - name: Install Flutter
+        script: |
+          git clone https://github.com/flutter/flutter.git --depth 1 -b $FLUTTER_VERSION $HOME/flutter
+          export PATH="$HOME/flutter/bin:$PATH"
+          flutter config --no-analytics
+          flutter doctor
+      - name: Get dependencies
+        script: |
+          export PATH="$HOME/flutter/bin:$PATH"
+          flutter pub get
+      - name: Run tests
+        script: |
+          export PATH="$HOME/flutter/bin:$PATH"
+          flutter test
+      - name: Build iOS app
+        script: |
+          export PATH="$HOME/flutter/bin:$PATH"
+          flutter build ios --release --no-codesign
+    artifacts:
+      - build/ios/iphoneos/*.app
+      - build/ios/Release-iphoneos/*.app
+    publishing:
+      email:
+        recipients:
+          - sophie@preppro.app
+        notify:
+          success: true
+          failure: true
+
+  android-build:
+    name: Android Build & Test
+    instance_type: linux_x2
+    environment:
+      vars:
+        FLUTTER_VERSION: "stable"
+    triggering:
+      events:
+        - push
+        - pull_request
+      branch:
+        include_patterns:
+          - main
+          - develop
+    scripts:
+      - name: Install Flutter
+        script: |
+          git clone https://github.com/flutter/flutter.git --depth 1 -b $FLUTTER_VERSION $HOME/flutter
+          export PATH="$HOME/flutter/bin:$PATH"
+          flutter config --no-analytics
+          flutter doctor
+      - name: Get dependencies
+        script: |
+          export PATH="$HOME/flutter/bin:$PATH"
+          flutter pub get
+      - name: Run tests
+        script: |
+          export PATH="$HOME/flutter/bin:$PATH"
+          flutter test
+      - name: Build Android app
+        script: |
+          export PATH="$HOME/flutter/bin:$PATH"
+          flutter build apk --release
+    artifacts:
+      - build/app/outputs/flutter-apk/app-release.apk
+    publishing:
+      email:
+        recipients:
+          - sophie@preppro.app
+        notify:
+          success: true
+          failure: true
