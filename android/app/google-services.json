@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "235971954780",
+    "project_id": "preppro-2f5bc",
+    "storage_bucket": "preppro-2f5bc.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:235971954780:android:7198ca430444dd6b90fe99",
+        "android_client_info": {
+          "package_name": "com.preppro.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBiOg3Maef2QU_0aAjXGJkpmGHGNc76AH8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
