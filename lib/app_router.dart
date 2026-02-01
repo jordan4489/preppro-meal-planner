@@ -1,5 +1,8 @@
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'features/shell/app_shell.dart';
+import 'core/providers/auth_provider.dart';
 
 import 'features/home/home_page.dart';
 import 'features/onboarding/onboarding_page.dart';
@@ -9,11 +12,36 @@ import 'features/weight/weight_page.dart';
 import 'features/plan/plan_page.dart';
 import 'features/shopping/shopping_list_page.dart';
 import 'features/profile/profile_page.dart';
+import 'features/auth/login_page.dart';
+import 'features/auth/signup_page.dart';
 
 final appRouter = GoRouter(
-  initialLocation: '/home', // ← start on Home
-
+  redirect: (context, state) {
+    final authProvider = context.read<AuthProvider>();
+    final isLoggedIn = authProvider.isLoggedIn;
+    
+    // If user is not logged in and not on auth pages, redirect to login
+    if (!isLoggedIn) {
+      if (state.matchedLocation == '/login' || state.matchedLocation == '/signup') {
+        return null; // Allow auth pages
+      }
+      return '/login';
+    }
+    
+    // If user is logged in and on auth pages, redirect to home
+    if (isLoggedIn && (state.matchedLocation == '/login' || state.matchedLocation == '/signup')) {
+      return '/home';
+    }
+    
+    return null;
+  },
+  initialLocation: '/login',
   routes: [
+    // Auth routes
+    GoRoute(path: '/login', builder: (_, __) => const LoginPage()),
+    GoRoute(path: '/signup', builder: (_, __) => const SignupPage()),
+    
+    // Main app routes
     ShellRoute(
       builder: (context, state, child) => AppShell(child: child),
       routes: [

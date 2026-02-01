@@ -1,12 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:provider/provider.dart';
 import 'app_router.dart';
 import 'theme/theme.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 import 'core/services/profile_service.dart';
+import 'core/providers/auth_provider.dart';
+import 'firebase_options.dart';
 
 Future<void> main() async {
   // Ensure bindings before using platform plugins (SharedPreferences etc.)
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Initialize Firebase
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
 
   const sentryDsn = String.fromEnvironment('SENTRY_DSN', defaultValue: '');
 
@@ -34,12 +43,15 @@ class PrepProApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
-      title: 'PrepPro',
-      theme: AppTheme.light,
-      darkTheme: AppTheme.dark,
-      routerConfig: appRouter,
-      debugShowCheckedModeBanner: false,
+    return ChangeNotifierProvider(
+      create: (_) => AuthProvider(),
+      child: MaterialApp.router(
+        title: 'PrepPro',
+        theme: AppTheme.light,
+        darkTheme: AppTheme.dark,
+        routerConfig: appRouter,
+        debugShowCheckedModeBanner: false,
+      ),
     );
   }
 }

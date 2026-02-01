@@ -1,0 +1,91 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
+class AuthService {
+  static final FirebaseAuth _auth = FirebaseAuth.instance;
+  static final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  // Get current user
+  static User? get currentUser => _auth.currentUser;
+
+  // Check if user is logged in
+  static bool get isLoggedIn => _auth.currentUser != null;
+
+  // Auth state stream
+  static Stream<User?> get authStateChanges => _auth.authStateChanges();
+
+  // Sign up with email and password
+  static Future<String?> signUp({
+    required String email,
+    required String password,
+    required String displayName,
+  }) async {
+    try {
+      final userCredential = await _auth.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+
+      await userCredential.user?.updateDisplayName(displayName);
+
+      // Create user document in Firestore
+      await _firestore.collection('users').doc(userCredential.user!.uid).set({
+        'email': email,
+        'displayName': displayName,
+        'createdAt': FieldValue.serverTimestamp(),
+        'updatedAt': FieldValue.serverTimestamp(),
+      });
+
+      return null; // Success
+    } on FirebaseAuthException catch (e) {
+      return e.message ?? 'Sign up failed';
+    }
+  }
+
+  // Sign in with email and password
+  static Future<String?> signIn({
+    required String email,
+    required String password,
+  }) async {
+    try {
+      await _auth.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+      return null; // Success
+    } on FirebaseAuthException catch (e) {
+      return e.message ?? 'Sign in failed';
+    }
+  }
+
+  // Sign out
+  static Future<void> signOut() async {
+    await _auth.signOut();
+  }
+
+  // Password reset
+  static Future<String?> resetPassword({required String email}) async {
+    try {
+      await _auth.sendPasswordResetEmail(email: email);
+      return null; // Success
+    } on FirebaseAuthException catch (e) {
+      return e.message ?? 'Password reset failed';
+    }
+  }
+
+  // Update user profile
+  static Future<String?> updateProfile({
+    required String displayName,
+  }) async {
+    try {
+      await _auth.currentUser?.updateDisplayName(displayName);
+      await _firestore
+          .collection('users')
+          .doc(_auth.currentUser!.uid)
+          .update({'displayName': displayName, 'updatedAt': FieldValue.serverTimestamp()});
+      return null; // Success
+    } catch (e) {
+      return 'Update failed: $e';
+    }
+  }
+}
