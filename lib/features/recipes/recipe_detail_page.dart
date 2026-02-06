@@ -4,10 +4,19 @@ import '../../core/services/favorites_service.dart';
 import '../../core/services/recipe_metrics.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/models/recipe.dart';
+import '../../core/services/personalization_service.dart';
 
-class RecipeDetailPage extends StatelessWidget {
+class RecipeDetailPage extends StatefulWidget {
   final String recipeId;
   const RecipeDetailPage({super.key, required this.recipeId});
+
+  @override
+  State<RecipeDetailPage> createState() => _RecipeDetailPageState();
+}
+
+class _RecipeDetailPageState extends State<RecipeDetailPage> {
+  double servings = 1.0;
+  bool _viewRecorded = false;
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +48,7 @@ class RecipeDetailPage extends StatelessWidget {
         }
         final list = snap.data!;
         final r = list.firstWhere(
-          (x) => x.id == recipeId,
+          (x) => x.id == widget.recipeId,
           orElse: () => Recipe(
             id: 'not_found',
             title: 'Not found',
@@ -48,6 +57,7 @@ class RecipeDetailPage extends StatelessWidget {
             tags: const [],
             nutritionKcal: 0,
             nutritionProtein: 0,
+            allergens: const {},
           ),
         );
         if (r.id == 'not_found') {
@@ -75,42 +85,48 @@ class RecipeDetailPage extends StatelessWidget {
           );
         }
 
-        return StatefulBuilder(builder: (context, setState) {
-          double servings = 1.0;
-          final cs = Theme.of(context).colorScheme;
-          final isFav = favoritesService.isFavorite(r.title);
-          final imagePath = r.image;
-          return Scaffold(
-            floatingActionButton: FloatingActionButton(
-              onPressed: () async {
-                await favoritesService.toggle(r.title);
-                setState(() {});
-              },
-              child: Icon(isFav ? Icons.favorite : Icons.favorite_border),
-            ),
-            body: Stack(
-              children: [
-                Positioned.fill(
-                  child: Opacity(
-                    opacity: 0.05,
-                    child: Transform.scale(
-                      scale: 0.6,
-                      child: Image.asset(
-                        'assets/images/PrepProBlue.png',
-                        fit: BoxFit.cover,
-                        alignment: Alignment.center,
-                        errorBuilder: (_, __, ___) => const SizedBox(),
-                      ),
+        final cs = Theme.of(context).colorScheme;
+        final isFav = favoritesService.isFavorite(r.title);
+        final displayTitle = r.displayTitle;
+        final imagePath = r.image;
+        final allergens = r.allergens.toList()..sort();
+        if (!_viewRecorded) {
+          _viewRecorded = true;
+          PersonalizationService.recordView(r.id);
+        }
+        return Scaffold(
+          floatingActionButton: FloatingActionButton(
+            onPressed: () async {
+              final nextFav = !isFav;
+              await favoritesService.toggle(r.title);
+              await PersonalizationService.recordFavorite(r.id, nextFav);
+              setState(() {});
+            },
+            child: Icon(isFav ? Icons.favorite : Icons.favorite_border),
+          ),
+          body: Stack(
+            children: [
+              Positioned.fill(
+                child: Opacity(
+                  opacity: 0.05,
+                  child: Transform.scale(
+                    scale: 0.6,
+                    child: Image.asset(
+                      'assets/images/PrepProBlue.png',
+                      fit: BoxFit.cover,
+                      alignment: Alignment.center,
+                      errorBuilder: (_, __, ___) => const SizedBox(),
                     ),
                   ),
                 ),
-                CustomScrollView(slivers: [
+              ),
+              CustomScrollView(slivers: [
                   SliverAppBar(
                     pinned: true,
                     expandedHeight: 240,
                     flexibleSpace: FlexibleSpaceBar(
                       title: Text(
-                        r.title,
+                        displayTitle,
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         style: const TextStyle(
@@ -140,7 +156,7 @@ class RecipeDetailPage extends StatelessWidget {
                             child: Icon(
                               Icons.restaurant_menu,
                               size: 80,
-                              color: cs.primary.withOpacity(0.3),
+                              color: cs.primary.withValues(alpha: 0.3),
                             ),
                           ),
                         ],
@@ -172,8 +188,10 @@ class RecipeDetailPage extends StatelessWidget {
                               ],
                             ),
                             const Divider(height: 24),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            Wrap(
+                              alignment: WrapAlignment.spaceAround,
+                              runSpacing: 12,
+                              spacing: 12,
                               children: [
                                 _MacroCard(
                                   icon: Icons.local_fire_department,
@@ -421,6 +439,34 @@ class RecipeDetailPage extends StatelessWidget {
                       ),
                       const SizedBox(height: 24),
                     ],
+                      if (allergens.isNotEmpty) ...[
+                        Text(
+                          'Allergens',
+                          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                                fontWeight: FontWeight.bold,
+                              ),
+                        ),
+                        const SizedBox(height: 8),
+                        Wrap(
+                          spacing: 8,
+                          runSpacing: 8,
+                          children: allergens
+                              .map((a) => Chip(
+                                    label: Text(
+                                      a[0].toUpperCase() + a.substring(1),
+                                    ),
+                                    backgroundColor: cs.errorContainer,
+                                    labelStyle: TextStyle(color: cs.onErrorContainer),
+                                  ))
+                              .toList(),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          'Allergen info is best-effort. Verify ingredients if you have severe allergies.',
+                          style: Theme.of(context).textTheme.bodySmall,
+                        ),
+                        const SizedBox(height: 24),
+                      ],
                     // Instructions
                     Text(
                       'Instructions',
@@ -466,16 +512,17 @@ class RecipeDetailPage extends StatelessWidget {
                     const SizedBox(height: 80),
                   ]),
                 ),
-              )
-            ]),
+              ),
+            ],
+          ),
           ],
         ),
-            bottomNavigationBar: Container(
+        bottomNavigationBar: Container(
               decoration: BoxDecoration(
                 color: Theme.of(context).colorScheme.surface,
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
+                      color: Colors.black.withValues(alpha: 0.1),
                     blurRadius: 8,
                     offset: const Offset(0, -2),
                   ),
@@ -511,8 +558,7 @@ class RecipeDetailPage extends StatelessWidget {
                 ),
               ),
             ),
-          );
-        });
+        );
       },
     );
   }

@@ -25,6 +25,133 @@ class _S extends State<RecipesPage> {
   bool _favoritesOnly = false;
   int _minK = 0, _maxK = 1200, _lo = 0, _hi = 1200;
   double _pFloor = 0;
+
+  static const _fishKeywords = [
+    'fish',
+    'salmon',
+    'cod',
+    'tuna',
+    'mackerel',
+    'haddock',
+    'bass',
+    'sea bass',
+    'seabass',
+    'trout',
+    'sardine',
+    'sardines',
+    'tilapia',
+    'halibut',
+    'snapper',
+    'mahi',
+    'mahi-mahi',
+    'swordfish',
+    'catfish',
+    'pollock',
+    'hake',
+    'sole',
+    'anchovy',
+    'anchovies',
+    'herring'
+  ];
+  static const _seafoodKeywords = [
+    'prawn',
+    'prawns',
+    'shrimp',
+    'scallop',
+    'crab',
+    'lobster',
+    'seafood',
+    'mussel',
+    'mussels',
+    'clam',
+    'clams',
+    'octopus',
+    'squid',
+    'calamari'
+  ];
+  static const _dairyKeywords = [
+    'milk',
+    'cheese',
+    'cream',
+    'butter',
+    'yogurt',
+    'yoghurt',
+    'ghee',
+    'whey',
+    'casein',
+    'curd',
+    'paneer',
+    'ricotta',
+    'mozzarella',
+    'parmesan',
+    'cheddar',
+    'feta',
+    'halloumi',
+    'sour cream',
+    'cream cheese',
+    'creme',
+    'crème'
+  ];
+  static const _glutenKeywords = [
+    'bread',
+    'pasta',
+    'flour',
+    'wheat',
+    'noodle',
+    'breadcrumbs',
+    'couscous',
+    'semolina',
+    'bulgur',
+    'farro',
+    'spelt',
+    'rye',
+    'barley',
+    'malt'
+  ];
+  static const _meatKeywords = [
+    'chicken',
+    'beef',
+    'pork',
+    'lamb',
+    'turkey',
+    'bacon',
+    'ham',
+    'sausage',
+    'fish',
+    'seafood',
+    'prawn',
+    'prawns',
+    'shrimp',
+    'crab',
+    'lobster',
+    'scallop',
+    'mussel',
+    'mussels',
+    'clam',
+    'clams',
+    'octopus',
+    'squid',
+    'calamari',
+    'tuna',
+    'salmon',
+    'cod',
+    'anchovy',
+    'anchovies',
+    'sardine',
+    'sardines',
+    'tilapia',
+    'halibut',
+    'snapper',
+    'mahi',
+    'mahi-mahi',
+    'swordfish',
+    'catfish',
+    'pollock',
+    'haddock',
+    'trout',
+    'mackerel',
+    'herring'
+  ];
   @override
   void initState() {
     super.initState();
@@ -33,12 +160,7 @@ class _S extends State<RecipesPage> {
   }
 
   String _proteinOf(Recipe r) {
-    final hay = (r.title +
-            ' ' +
-            r.tags.join(' ') +
-            ' ' +
-            (r.ingredients ?? []).map((e) => e.name).join(' '))
-        .toLowerCase();
+    final hay = _recipeHaystack(r);
     bool has(List<String> k) => k.any((x) => hay.contains(x));
     if (has(['chicken'])) return 'chicken';
     if (has(['turkey'])) return 'turkey';
@@ -47,18 +169,8 @@ class _S extends State<RecipesPage> {
     if (has(['pork'])) return 'pork';
     if (has(['egg', 'eggs'])) return 'eggs';
     if (has(['tofu', 'tempeh'])) return 'tofu/tempeh';
-    if (has([
-      'salmon',
-      'cod',
-      'tuna',
-      'mackerel',
-      'haddock',
-      'bass',
-      'trout',
-      'sardine'
-    ])) return 'fish';
-    if (has(
-        ['prawn', 'prawns', 'shrimp', 'scallop', 'crab', 'lobster', 'seafood']))
+    if (has(_fishKeywords)) return 'fish';
+    if (has(_seafoodKeywords))
       return 'seafood';
     if (has(['vegan', 'vegetarian', 'veggie', 'plant'])) return 'veggie';
     return 'veggie';
@@ -128,7 +240,18 @@ class _S extends State<RecipesPage> {
             r.nutritionProtein >= _pFloor)
         .toList();
     if (_prefProteins.isNotEmpty)
-      s = s.where((r) => _prefProteins.contains(_proteinOf(r))).toList();
+      s = s.where((r) {
+        final p = _proteinOf(r);
+        if (_prefProteins.contains(p)) return false;
+        final hay = _recipeHaystack(r);
+        if (_prefProteins.contains('fish') && _fishKeywords.any(hay.contains)) {
+          return false;
+        }
+        if (_prefProteins.contains('seafood') && _seafoodKeywords.any(hay.contains)) {
+          return false;
+        }
+        return true;
+      }).toList();
     // Apply favorites filter
     if (_favoritesOnly) {
       s = s.where((r) => favoritesService.isFavorite(r.title)).toList();
@@ -137,48 +260,32 @@ class _S extends State<RecipesPage> {
     if (_dietary.isNotEmpty) {
       s = s.where((r) {
         final titleLower = r.title.toLowerCase();
+        final displayTitleLower = r.displayTitle.toLowerCase();
         final tagsLower = r.tags.map((e) => e.toLowerCase()).toList();
         final ingredientsLower = (r.ingredients ?? [])
             .map((e) => e.name.toLowerCase())
             .join(' ');
-        final combined = '$titleLower ${tagsLower.join(' ')} $ingredientsLower';
-        
+        final combined = '$titleLower $displayTitleLower ${tagsLower.join(' ')} $ingredientsLower';
+        bool hasAny(List<String> k) => k.any((x) => combined.contains(x));
+        bool hasAllergen(String a) => r.allergens.contains(a);
         return _dietary.every((diet) {
           switch (diet) {
             case 'vegetarian':
-              return !combined.contains('chicken') &&
-                  !combined.contains('beef') &&
-                  !combined.contains('pork') &&
-                  !combined.contains('lamb') &&
-                  !combined.contains('fish') &&
-                  !combined.contains('seafood') &&
-                  !combined.contains('turkey');
+              return !hasAny(_meatKeywords);
             case 'vegan':
-              return !combined.contains('chicken') &&
-                  !combined.contains('beef') &&
-                  !combined.contains('pork') &&
-                  !combined.contains('lamb') &&
-                  !combined.contains('fish') &&
-                  !combined.contains('seafood') &&
-                  !combined.contains('turkey') &&
+              return !hasAny(_meatKeywords) &&
+                  !hasAny(_dairyKeywords) &&
+                  !hasAllergen('dairy') &&
+                  !hasAllergen('egg') &&
+                  !hasAllergen('fish') &&
+                  !hasAllergen('shellfish') &&
                   !combined.contains('egg') &&
-                  !combined.contains('milk') &&
-                  !combined.contains('cheese') &&
-                  !combined.contains('yogurt') &&
-                  !combined.contains('cream') &&
-                  !combined.contains('butter');
+                  !combined.contains('honey') &&
+                  !combined.contains('gelatin');
             case 'gluten-free':
-              return !combined.contains('bread') &&
-                  !combined.contains('pasta') &&
-                  !combined.contains('flour') &&
-                  !combined.contains('wheat') &&
-                  !combined.contains('noodle');
+              return !hasAny(_glutenKeywords) && !hasAllergen('gluten');
             case 'dairy-free':
-              return !combined.contains('milk') &&
-                  !combined.contains('cheese') &&
-                  !combined.contains('yogurt') &&
-                  !combined.contains('cream') &&
-                  !combined.contains('butter');
+              return !hasAny(_dairyKeywords) && !hasAllergen('dairy');
             case 'low-carb':
               return r.nutritionKcal > 0 &&
                   ((r.nutritionProtein * 4) / r.nutritionKcal) > 0.3;
@@ -208,15 +315,27 @@ class _S extends State<RecipesPage> {
     }
     if (_query.trim().isNotEmpty) {
       final q = _query.toLowerCase();
-      s = s.where((r) => r.title.toLowerCase().contains(q)).toList();
+      s = s.where((r) => r.displayTitle.toLowerCase().contains(q)).toList();
     }
     return s;
+  }
+
+  String _recipeHaystack(Recipe r) {
+        return (r.title +
+          ' ' +
+          r.displayTitle +
+            ' ' +
+            r.tags.join(' ') +
+            ' ' +
+            (r.ingredients ?? []).map((e) => e.name).join(' '))
+        .toLowerCase();
   }
 
   void _openDietarySelector() {
     showModalBottomSheet(
         context: context,
         showDragHandle: true,
+        isScrollControlled: true,
         builder: (ctx) {
           final local = Set<String>.from(_dietary);
           final dietaryOptions = [
@@ -229,49 +348,57 @@ class _S extends State<RecipesPage> {
             'kosher'
           ];
           return StatefulBuilder(
-              builder: (c, setM) => Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
-                  child: Column(mainAxisSize: MainAxisSize.min, children: [
-                    Row(
-                      children: [
-                        const Icon(Icons.restaurant_menu, size: 20),
-                        const SizedBox(width: 8),
-                        const Text('Dietary Requirements',
-                            style: TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.w600)),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    Wrap(
-                        spacing: 8,
-                        runSpacing: 4,
-                        children: dietaryOptions
-                            .map((d) => FilterChip(
-                                label: Text(
-                                    d.split('-').map((w) => w[0].toUpperCase() + w.substring(1)).join(' '),
-                                    style: const TextStyle(fontSize: 15)),
-                                selected: local.contains(d),
-                                onSelected: (s) => setM(
-                                    () => s ? local.add(d) : local.remove(d))))
-                            .toList()),
-                    const SizedBox(height: 12),
-                    Row(children: [
-                      Expanded(
-                          child: FilledButton.icon(
-                              onPressed: () {
-                                setState(() {
-                                  _dietary
-                                    ..clear()
-                                    ..addAll(local);
-                                });
-                                if (mounted) {
-                                  Navigator.pop(context);
-                                }
-                              },
-                              icon: const Icon(Icons.check),
-                              label: const Text('Apply')))
-                    ])
-                  ])));
+              builder: (c, setM) => DraggableScrollableSheet(
+                expand: false,
+                builder: (context, scrollController) => SafeArea(
+                  child: ListView(
+                    controller: scrollController,
+                    padding: EdgeInsets.fromLTRB(
+                        16, 8, 16, 16 + MediaQuery.of(ctx).viewInsets.bottom),
+                    children: [
+                      Row(
+                        children: [
+                          const Icon(Icons.restaurant_menu, size: 20),
+                          const SizedBox(width: 8),
+                          const Text('Dietary Requirements',
+                              style: TextStyle(
+                                  fontSize: 16, fontWeight: FontWeight.w600)),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      Wrap(
+                          spacing: 8,
+                          runSpacing: 4,
+                          children: dietaryOptions
+                              .map((d) => FilterChip(
+                                  label: Text(
+                                      d.split('-').map((w) => w[0].toUpperCase() + w.substring(1)).join(' '),
+                                      style: const TextStyle(fontSize: 15)),
+                                  selected: local.contains(d),
+                                  onSelected: (s) => setM(
+                                      () => s ? local.add(d) : local.remove(d))))
+                              .toList()),
+                      const SizedBox(height: 12),
+                      Row(children: [
+                        Expanded(
+                            child: FilledButton.icon(
+                                onPressed: () {
+                                  setState(() {
+                                    _dietary
+                                      ..clear()
+                                      ..addAll(local);
+                                  });
+                                  if (mounted) {
+                                    Navigator.pop(context);
+                                  }
+                                },
+                                icon: const Icon(Icons.check),
+                                label: const Text('Apply')))
+                      ])
+                    ],
+                  ),
+                ),
+              ));
         });
   }
 
@@ -483,7 +610,7 @@ class _S extends State<RecipesPage> {
                               Icon(
                                 Icons.search_off,
                                 size: 80,
-                                color: Theme.of(c).colorScheme.primary.withOpacity(0.3),
+                                color: Theme.of(c).colorScheme.primary.withValues(alpha: 0.3),
                               ),
                               const SizedBox(height: 24),
                               Text(

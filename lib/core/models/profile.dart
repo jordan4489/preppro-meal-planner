@@ -13,6 +13,7 @@ class Profile {
   final DateTime? targetDate; // target date for reaching goal weight
   final String units; // 'metric' or 'imperial'
   final bool consentTelemetry; // whether user consented to crash/usage telemetry
+  final bool plannerOnly; // meal planning only (no weight goals)
 
   Profile({
     this.weightKg,
@@ -25,6 +26,7 @@ class Profile {
     this.targetDate,
     this.units = 'metric',
     this.consentTelemetry = false,
+    this.plannerOnly = false,
   });
 
   Profile copyWith({
@@ -38,6 +40,7 @@ class Profile {
     DateTime? targetDate,
     String? units,
     bool? consentTelemetry,
+    bool? plannerOnly,
   }) => Profile(
         weightKg: weightKg ?? this.weightKg,
         heightCm: heightCm ?? this.heightCm,
@@ -49,9 +52,11 @@ class Profile {
         targetDate: targetDate ?? this.targetDate,
         units: units ?? this.units,
         consentTelemetry: consentTelemetry ?? this.consentTelemetry,
+        plannerOnly: plannerOnly ?? this.plannerOnly,
       );
 
   double? computeBmr() {
+    if (plannerOnly) return null;
     if (weightKg == null || heightCm == null || age == null || sex == null) return null;
     final w = weightKg!;
     final h = heightCm!;
@@ -82,6 +87,7 @@ class Profile {
 
   /// Returns estimated daily calorie target (rounded int) or null if not enough data
   int? computeDailyTarget() {
+    if (plannerOnly) return null;
     final b = computeBmr();
     if (b == null) return null;
     final tdee = b * activityMultiplier();
@@ -117,6 +123,7 @@ class Profile {
         'targetDate': targetDate?.toIso8601String(),
         'units': units,
         'consentTelemetry': consentTelemetry,
+      'plannerOnly': plannerOnly,
       };
 
   static Profile fromJson(Map<String, Object?> json) {
@@ -134,6 +141,9 @@ class Profile {
     }
     final units = (json['units'] as String?) ?? 'metric';
     final consent = (json['consentTelemetry'] is bool) ? (json['consentTelemetry'] as bool) : (json['consentTelemetry'] is String ? (json['consentTelemetry'] == 'true') : false);
+    final plannerOnly = (json['plannerOnly'] is bool)
+      ? (json['plannerOnly'] as bool)
+      : (json['plannerOnly'] is String ? (json['plannerOnly'] == 'true') : false);
     DateTime? targetDate;
     if (json['targetDate'] is String) {
       try {
@@ -151,6 +161,7 @@ class Profile {
       targetDate: targetDate,
       units: units,
       consentTelemetry: consent,
+      plannerOnly: plannerOnly,
     );
   }
 

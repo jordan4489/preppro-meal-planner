@@ -18,9 +18,9 @@ class PlanStore{
         if(d is List){
           if(d.isEmpty) { out.add([]); continue; }
           if(d.first is String){
-            out.add((d as List).map((e)=> {'id': e.toString(), 'servings': 1.0}).toList());
+            out.add(d.map((e)=> {'id': e.toString(), 'servings': 1.0}).toList());
           } else if(d.first is Map){
-            out.add((d as List).map((e)=> Map<String,Object>.from(e)).toList());
+            out.add(d.map((e)=> Map<String,Object>.from(e)).toList());
           } else {
             out.add([]);
           }

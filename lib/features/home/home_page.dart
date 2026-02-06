@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import '../../widgets/progress_card.dart';
 import '../../core/services/profile_service.dart';
+import '../../core/models/profile.dart';
+import 'package:provider/provider.dart';
+import '../../core/providers/auth_provider.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -11,6 +15,39 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  Future<PackageInfo> _packageInfo() => PackageInfo.fromPlatform();
+
+  void _showAbout(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('About PrepPro'),
+        content: FutureBuilder<PackageInfo>(
+          future: _packageInfo(),
+          builder: (context, snap) {
+            final version = snap.data == null
+                ? 'Loading…'
+                : '${snap.data!.version}+${snap.data!.buildNumber}';
+            return Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text('Terms (short): Use the app responsibly. Meal plans are informational and not medical advice. Calorie estimates are approximate.'),
+                const SizedBox(height: 12),
+                const Text('Copyright: © 2026 PrepPro. All app content, recipes, and branding are protected. No reuse without permission.'),
+                const SizedBox(height: 12),
+                Text('App version: $version'),
+              ],
+            );
+          },
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(dialogContext), child: const Text('Close')),
+        ],
+      ),
+    );
+  }
+
   void _openTab(BuildContext context, String tab) {
     switch (tab) {
       case 'plan':
@@ -58,8 +95,14 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         toolbarHeight: 64,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => context.go('/home'),
+          onPressed: () async {
+            await context.read<AuthProvider>().signOut();
+            if (context.mounted) {
+              context.go('/login');
+            }
+          },
+          icon: const Icon(Icons.logout),
+          tooltip: 'Log out',
         ),
         centerTitle: true,
         title: Image.asset('assets/images/PrepProBlue.png', height: 42, errorBuilder: (_, __, ___) => const Text('PrepPro')),
@@ -100,7 +143,7 @@ class _HomePageState extends State<HomePage> {
               borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
+                  color: Colors.black.withValues(alpha: 0.05),
                   blurRadius: 10,
                   offset: const Offset(0, 4),
                 ),
@@ -112,7 +155,7 @@ class _HomePageState extends State<HomePage> {
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.surface.withOpacity(0.9),
+                    color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.9),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Icon(
@@ -137,7 +180,7 @@ class _HomePageState extends State<HomePage> {
                       Text(
                         'Set profile → Generate plan → Start cooking!',
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: Theme.of(context).colorScheme.onPrimaryContainer.withOpacity(0.8),
+                          color: Theme.of(context).colorScheme.onPrimaryContainer.withValues(alpha: 0.8),
                         ),
                       ),
                     ],
@@ -147,32 +190,41 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
           const SizedBox(height: 24),
-          FutureBuilder<int?>(
-            future: ProfileService.computeDailyTarget(),
+          FutureBuilder<Profile?>(
+            future: ProfileService.loadProfile(),
             builder: (c, snap) {
-              final t = snap.data;
-              final subtitle = t == null ? 'Tap to set your goal' : 'Target: $t kcal';
+              final profile = snap.data;
+              final plannerOnly = profile?.plannerOnly ?? false;
+              final t = plannerOnly ? null : profile?.computeDailyTarget();
+              final subtitle = plannerOnly
+                  ? 'Meal planner mode'
+                  : (t == null ? 'Tap to set your goal' : 'Target: $t kcal');
               final progress = 0.0; // TODO: hook up actual consumed calories
               return Column(children: [
-                ProgressCard(title: 'Calories', subtitle: subtitle, progress: progress, onTap: () async {
-                  // navigate to Profile for edits
-                  context.go('/profile');
-                  setState(() {});
-                }),
+                ProgressCard(
+                  title: plannerOnly ? 'Meal planning' : 'Calories',
+                  subtitle: subtitle,
+                  progress: progress,
+                  onTap: () async {
+                    // navigate to Profile for edits
+                    context.go('/profile');
+                    setState(() {});
+                  },
+                ),
                 const SizedBox(height: 24),
-          FutureBuilder<int>(
-            future: ProfileService.getWeeklyPlanCount(),
-            builder: (c, snap) {
-              final count = snap.data ?? 0;
-              final progress = count / 7.0;
-              return ProgressCard(
-                title: 'Weekly Activity',
-                subtitle: '$count of 7 days with meal plans',
-                progress: progress.clamp(0.0, 1.0),
-                onTap: () => context.go('/plan'),
-              );
-            },
-          ),
+                FutureBuilder<int>(
+                  future: ProfileService.getWeeklyPlanCount(),
+                  builder: (c, snap) {
+                    final count = snap.data ?? 0;
+                    final progress = count / 7.0;
+                    return ProgressCard(
+                      title: 'Weekly Activity',
+                      subtitle: '$count of 7 days with meal plans',
+                      progress: progress.clamp(0.0, 1.0),
+                      onTap: () => context.go('/plan'),
+                    );
+                  },
+                ),
               ]);
             },
           ),
@@ -192,7 +244,7 @@ class _HomePageState extends State<HomePage> {
               child: FilledButton.tonalIcon(
                 onPressed: () => _openTab(context, 'plan'),
                 icon: const Icon(Icons.add, size: 20),
-                label: const Text('Plan', style: TextStyle(fontSize: 13)),
+                label: const Text('Plan', style: TextStyle(fontSize: 13), maxLines: 1, overflow: TextOverflow.ellipsis),
                 style: FilledButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 8),
                 ),
@@ -203,7 +255,7 @@ class _HomePageState extends State<HomePage> {
               child: FilledButton.tonalIcon(
                 onPressed: () => _openTab(context, 'recipes'),
                 icon: const Icon(Icons.search, size: 20),
-                label: const Text('Recipes', style: TextStyle(fontSize: 13)),
+                label: const Text('Recipes', style: TextStyle(fontSize: 13), maxLines: 1, overflow: TextOverflow.ellipsis),
                 style: FilledButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 8),
                 ),
@@ -214,7 +266,7 @@ class _HomePageState extends State<HomePage> {
               child: FilledButton.tonalIcon(
                 onPressed: () => _openTab(context, 'shopping'),
                 icon: const Icon(Icons.list, size: 20),
-                label: const Text('Shop', style: TextStyle(fontSize: 13)),
+                label: const Text('Shop', style: TextStyle(fontSize: 13), maxLines: 1, overflow: TextOverflow.ellipsis),
                 style: FilledButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 8),
                 ),
@@ -261,7 +313,14 @@ class _HomePageState extends State<HomePage> {
                 );
               },
             );
-          })
+          }),
+          const SizedBox(height: 24),
+          Center(
+            child: TextButton(
+              onPressed: () => _showAbout(context),
+              child: const Text('About • Terms • Copyright • Version'),
+            ),
+          ),
             ]),
           ),
         ],
@@ -307,12 +366,10 @@ class _TileCard extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 8),
                   child: Text(
                     tile.title,
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w600,
-                    ),
                     textAlign: TextAlign.center,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
+                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                          fontWeight: FontWeight.w600,
+                        ),
                   ),
                 ),
               ],

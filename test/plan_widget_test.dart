@@ -3,9 +3,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:preppro/features/plan/plan_page.dart';
 
 void main(){
+  // Skipped: depends on async services; enable with proper mocks.
   testWidgets('Generate without profile shows set goal message', (WidgetTester tester) async {
-    // Skipped for now: UI depends on async services; add later with proper mocks
-    return;
     await tester.pumpWidget(const MaterialApp(home: PlanPage()));
     await tester.pumpAndSettle();
 
@@ -17,5 +16,5 @@ void main(){
     await tester.pumpAndSettle();
 
     expect(find.byType(SnackBar), findsOneWidget);
-  });
+  }, skip: true);
 }

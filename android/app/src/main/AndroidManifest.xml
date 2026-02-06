@@ -3,6 +3,9 @@
         android:label="preppro"
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_prep">
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-8700408294196968~6225862801"/>
         <activity
             android:name=".MainActivity"
             android:exported="true"

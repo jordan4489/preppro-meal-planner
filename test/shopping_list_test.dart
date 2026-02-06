@@ -12,6 +12,7 @@ void main() {
       tags: [],
       nutritionKcal: 300,
       nutritionProtein: 10.0,
+      allergens: const {},
       ingredients: [
         Ingredient(name: 'Rice', quantity: 100, unit: 'g'),
         Ingredient(name: 'Egg', quantity: 2, unit: 'pc'),
@@ -26,6 +27,7 @@ void main() {
       tags: [],
       nutritionKcal: 200,
       nutritionProtein: 8.0,
+      allergens: const {},
       ingredients: [
         Ingredient(name: 'Rice', quantity: 50, unit: 'g'),
         Ingredient(name: 'Egg', quantity: 1, unit: 'pc'),
@@ -57,7 +59,7 @@ void main() {
   });
 
   test('missing increments when recipe has no ingredients', () {
-    final r1 = Recipe(id: 'r1', title: 'No ing', isAirFryer: false, mealTypes: ['lunch'], tags: [], nutritionKcal: 100, nutritionProtein: 1.0, ingredients: null);
+    final r1 = Recipe(id: 'r1', title: 'No ing', isAirFryer: false, mealTypes: ['lunch'], tags: [], nutritionKcal: 100, nutritionProtein: 1.0, ingredients: null, allergens: const {});
     final all = [r1];
     final res = ShoppingListService.aggregate(allRecipes: all, selectedEntries: ['r1']);
     expect(res.missing, 1);

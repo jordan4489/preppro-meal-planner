@@ -16,7 +16,14 @@ class AuthProvider extends ChangeNotifier {
     _initializeAuth();
   }
 
-  void _initializeAuth() {
+  Future<void> _initializeAuth() async {
+    await AuthService.ensurePersistence();
+
+    // Check current user immediately on initialization
+    _user = AuthService.currentUser;
+    notifyListeners();
+
+    // Listen for future changes
     AuthService.authStateChanges.listen((user) {
       _user = user;
       notifyListeners();
@@ -80,7 +87,7 @@ class AuthProvider extends ChangeNotifier {
     _error = null;
     notifyListeners();
 
-    final error = await AuthService.resetPassword(email);
+    final error = await AuthService.resetPassword(email: email);
 
     _isLoading = false;
     if (error != null) {
@@ -94,7 +101,7 @@ class AuthProvider extends ChangeNotifier {
     _error = null;
     notifyListeners();
 
-    final error = await AuthService.updateProfile(displayName);
+    final error = await AuthService.updateProfile(displayName: displayName);
 
     _isLoading = false;
     if (error != null) {

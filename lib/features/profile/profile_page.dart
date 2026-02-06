@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import '../../core/services/profile_service.dart';
 import '../../core/models/profile.dart';
+import '../../core/providers/auth_provider.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -97,6 +99,7 @@ class _ProfilePageState extends State<ProfilePage> {
       targetDate: pWithUnits.targetDate,
       units: _units,
       consentTelemetry: _profile.consentTelemetry,
+      plannerOnly: _profile.plannerOnly,
     );
     await ProfileService.saveProfile(pFinal);
     setState(() => _profile = pFinal);
@@ -123,6 +126,18 @@ class _ProfilePageState extends State<ProfilePage> {
           onPressed: () => context.go('/home'),
         ),
         title: const Text('Profile'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout),
+            tooltip: 'Log out',
+            onPressed: () async {
+              await context.read<AuthProvider>().signOut();
+              if (context.mounted) {
+                context.go('/login');
+              }
+            },
+          )
+        ],
       ),
       body: Stack(
         children: [
@@ -165,11 +180,22 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
           ),
           const SizedBox(height: 16),
+          SwitchListTile(
+            title: const Text('Meal planning only'),
+            subtitle: const Text('Hide weight goals and use the app just for planning meals.'),
+            value: _profile.plannerOnly,
+            onChanged: (v) => setState(() => _profile = _profile.copyWith(plannerOnly: v)),
+          ),
+          const SizedBox(height: 8),
           ListTile(
             leading: const Icon(Icons.flag),
             title: const Text('Calculated daily calorie target'),
-            subtitle: Text(daily == null ? 'Enter weight/height/age to compute' : 'Target: $daily kcal'),
-            trailing: IconButton(onPressed: (){
+            subtitle: Text(_profile.plannerOnly
+                ? 'Meal planner mode enabled'
+                : (daily == null ? 'Enter weight/height/age to compute' : 'Target: $daily kcal')),
+            trailing: _profile.plannerOnly
+                ? null
+                : IconButton(onPressed: (){
               // explain computation
               final b = _profile.computeBmr();
               final mult = _profile.activityMultiplier();
@@ -227,49 +253,51 @@ class _ProfilePageState extends State<ProfilePage> {
             DropdownButton<ActivityLevel>(value: _activity, items: ActivityLevel.values.map((s) => DropdownMenuItem(value: s, child: Text(s.name))).toList(), onChanged: (v) => setState(() => _activity = v!)),
           ]),
           const SizedBox(height: 12),
-          const Text('Goal', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
-          const SizedBox(height: 8),
-          TextField(controller: _targetWeightCtrl, keyboardType: TextInputType.number, decoration: InputDecoration(labelText: _units == 'metric' ? 'Target weight (kg)' : 'Target weight (lb)')),
-          const SizedBox(height: 12),
-          ListTile(
-            contentPadding: EdgeInsets.zero,
-            leading: const Icon(Icons.calendar_today),
-            title: Text(_targetDate == null ? 'Target date (optional)' : 'Target: ${_targetDate!.year}-${_targetDate!.month.toString().padLeft(2, '0')}-${_targetDate!.day.toString().padLeft(2, '0')}'),
-            subtitle: _targetDate != null ? Text('${_targetDate!.difference(DateTime.now()).inDays} days remaining') : const Text('Set a goal date for automatic deficit calculation'),
-            trailing: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                if (_targetDate != null)
+          if (!_profile.plannerOnly) ...[
+            const Text('Goal', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+            const SizedBox(height: 8),
+            TextField(controller: _targetWeightCtrl, keyboardType: TextInputType.number, decoration: InputDecoration(labelText: _units == 'metric' ? 'Target weight (kg)' : 'Target weight (lb)')),
+            const SizedBox(height: 12),
+            ListTile(
+              contentPadding: EdgeInsets.zero,
+              leading: const Icon(Icons.calendar_today),
+              title: Text(_targetDate == null ? 'Target date (optional)' : 'Target: ${_targetDate!.year}-${_targetDate!.month.toString().padLeft(2, '0')}-${_targetDate!.day.toString().padLeft(2, '0')}'),
+              subtitle: _targetDate != null ? Text('${_targetDate!.difference(DateTime.now()).inDays} days remaining') : const Text('Set a goal date for automatic deficit calculation'),
+              trailing: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (_targetDate != null)
+                    IconButton(
+                      icon: const Icon(Icons.clear),
+                      onPressed: () => setState(() => _targetDate = null),
+                    ),
                   IconButton(
-                    icon: const Icon(Icons.clear),
-                    onPressed: () => setState(() => _targetDate = null),
+                    icon: const Icon(Icons.edit_calendar),
+                    onPressed: () async {
+                      final date = await showDatePicker(
+                        context: context,
+                        initialDate: _targetDate ?? DateTime.now().add(const Duration(days: 90)),
+                        firstDate: DateTime.now(),
+                        lastDate: DateTime.now().add(const Duration(days: 730)),
+                      );
+                      if (date != null) {
+                        setState(() => _targetDate = date);
+                      }
+                    },
                   ),
-                IconButton(
-                  icon: const Icon(Icons.edit_calendar),
-                  onPressed: () async {
-                    final date = await showDatePicker(
-                      context: context,
-                      initialDate: _targetDate ?? DateTime.now().add(const Duration(days: 90)),
-                      firstDate: DateTime.now(),
-                      lastDate: DateTime.now().add(const Duration(days: 730)),
-                    );
-                    if (date != null) {
-                      setState(() => _targetDate = date);
-                    }
-                  },
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-          const SizedBox(height: 8),
-          TextField(
-            controller: _weeklyChangeCtrl,
-            keyboardType: TextInputType.number,
-            decoration: InputDecoration(
-              labelText: 'Weekly change (kg/week, negative for loss)',
-              helperText: _targetDate == null ? 'Or set a target date above for auto-calculation' : 'Leave empty to use target date calculation',
+            const SizedBox(height: 8),
+            TextField(
+              controller: _weeklyChangeCtrl,
+              keyboardType: TextInputType.number,
+              decoration: InputDecoration(
+                labelText: 'Weekly change (kg/week, negative for loss)',
+                helperText: _targetDate == null ? 'Or set a target date above for auto-calculation' : 'Leave empty to use target date calculation',
+              ),
             ),
-          ),
+          ],
           const SizedBox(height: 16),
           Row(children: [Expanded(child: FilledButton(onPressed: _save, child: const Text('Save'))), const SizedBox(width: 8), OutlinedButton(onPressed: () => context.go('/home'), child: const Text('Close'))])
         ]),

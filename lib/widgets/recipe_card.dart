@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../core/models/recipe.dart';
 import '../core/services/favorites_service.dart';
 import '../core/services/recipe_metrics.dart';
+import '../core/services/personalization_service.dart';
 
 class RecipeCard extends StatefulWidget {
   final Recipe recipe;
@@ -16,50 +18,56 @@ class _RecipeCardState extends State<RecipeCard> {
 
   @override
   Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
-    final isCompact = MediaQuery.of(context).size.width < 400;
-    final isFav = favoritesService.isFavorite(widget.recipe.title);
-    final firstLetter = widget.recipe.title.isNotEmpty ? widget.recipe.title[0].toUpperCase() : '?';
-    final imagePath = widget.recipe.image;
-    
-    return Card(
-      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-      elevation: 0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-        side: BorderSide(
-          color: cs.outlineVariant.withOpacity(0.5),
-          width: 1,
-        ),
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(16),
-        child: Stack(
-          children: [
-            // Full background logo watermark
-            Positioned.fill(
-              child: Opacity(
-                opacity: 0.05,
-                child: Transform.scale(
-                  scale: 0.6,
-                  child: Image.asset(
-                    'assets/images/PrepProBlue.png',
-                    fit: BoxFit.cover,
-                    alignment: Alignment.center,
-                    errorBuilder: (_, __, ___) => const SizedBox(),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final cs = Theme.of(context).colorScheme;
+        final isCompact = constraints.maxWidth < 430;
+        final isFav = favoritesService.isFavorite(widget.recipe.title);
+        final displayTitle = widget.recipe.displayTitle;
+        final firstLetter = displayTitle.isNotEmpty ? displayTitle[0].toUpperCase() : '?';
+        final imagePath = widget.recipe.image;
+        final tileSize = isCompact ? 64.0 : 80.0;
+        final padding = isCompact ? 12.0 : 18.0;
+        final trailingWidth = isCompact ? 60.0 : 72.0;
+
+        return Card(
+          margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+          elevation: 0,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+            side: BorderSide(
+              color: cs.outlineVariant.withValues(alpha: 0.5),
+              width: 1,
+            ),
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(16),
+            child: Stack(
+              children: [
+                // Full background logo watermark
+                Positioned.fill(
+                  child: Opacity(
+                    opacity: 0.05,
+                    child: Transform.scale(
+                      scale: 0.6,
+                      child: Image.asset(
+                        'assets/images/PrepProBlue.png',
+                        fit: BoxFit.cover,
+                        alignment: Alignment.center,
+                        errorBuilder: (_, __, ___) => const SizedBox(),
+                      ),
+                    ),
                   ),
                 ),
-              ),
-            ),
-            // Main content
-            InkWell(
-              onTap: widget.onTap,
-              child: Padding(
-                padding: EdgeInsets.all(isCompact ? 14 : 18),
-                child: Row(children: [
-                  Container(
-                    width: isCompact ? 70 : 80,
-                    height: isCompact ? 70 : 80,
+                // Main content
+                InkWell(
+                  onTap: widget.onTap,
+                  child: Padding(
+                    padding: EdgeInsets.all(padding),
+                    child: Row(children: [
+                      Container(
+                        width: tileSize,
+                        height: tileSize,
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         colors: [cs.primaryContainer, cs.secondaryContainer],
@@ -69,7 +77,7 @@ class _RecipeCardState extends State<RecipeCard> {
                       borderRadius: BorderRadius.circular(16),
                       boxShadow: [
                         BoxShadow(
-                          color: cs.primary.withOpacity(0.15),
+                          color: cs.primary.withValues(alpha: 0.15),
                           blurRadius: 12,
                           offset: const Offset(0, 4),
                         ),
@@ -87,7 +95,7 @@ class _RecipeCardState extends State<RecipeCard> {
                                   style: Theme.of(context).textTheme.headlineLarge?.copyWith(
                                     color: cs.onPrimaryContainer,
                                     fontWeight: FontWeight.bold,
-                                    fontSize: isCompact ? 32 : 38,
+                                    fontSize: isCompact ? 28 : 38,
                                   ),
                                 ),
                               ),
@@ -98,19 +106,19 @@ class _RecipeCardState extends State<RecipeCard> {
                                 style: Theme.of(context).textTheme.headlineLarge?.copyWith(
                                   color: cs.onPrimaryContainer,
                                   fontWeight: FontWeight.bold,
-                                  fontSize: isCompact ? 32 : 38,
+                                  fontSize: isCompact ? 28 : 38,
                                 ),
                               ),
                             ),
                     ),
                   ),
-            SizedBox(width: isCompact ? 12 : 16),
+            SizedBox(width: isCompact ? 10 : 16),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    widget.recipe.title,
+                    displayTitle,
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.w600,
                       fontSize: isCompact ? 14 : null,
@@ -190,36 +198,47 @@ class _RecipeCardState extends State<RecipeCard> {
             ),
             // Trailing icons with constrained width
             SizedBox(
-              width: isCompact ? 70 : 80,
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  if (widget.recipe.isAirFryer)
-                    Container(
-                      padding: const EdgeInsets.all(6),
-                      margin: const EdgeInsets.only(right: 4),
-                      decoration: BoxDecoration(
-                        color: cs.tertiaryContainer,
-                        borderRadius: BorderRadius.circular(8),
+              width: trailingWidth,
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                alignment: Alignment.centerRight,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    if (widget.recipe.isAirFryer)
+                      Container(
+                        padding: EdgeInsets.all(isCompact ? 4 : 6),
+                        margin: const EdgeInsets.only(right: 4),
+                        decoration: BoxDecoration(
+                          color: cs.tertiaryContainer,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Icon(
+                          Icons.air,
+                          size: isCompact ? 14 : 16,
+                          color: cs.onTertiaryContainer,
+                        ),
                       ),
-                      child: Icon(Icons.air, size: 16, color: cs.onTertiaryContainer),
+                    IconButton(
+                      icon: Icon(
+                        isFav ? Icons.favorite : Icons.favorite_border,
+                        color: isFav ? Colors.red : cs.outline,
+                        size: isCompact ? 20 : 22,
+                      ),
+                      onPressed: () async {
+                        final nextFav = !isFav;
+                        HapticFeedback.selectionClick();
+                        await favoritesService.toggle(widget.recipe.title);
+                        await PersonalizationService.recordFavorite(widget.recipe.id, nextFav);
+                        setState(() {});
+                      },
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(),
+                      visualDensity: VisualDensity.compact,
                     ),
-                  IconButton(
-                    icon: Icon(
-                      isFav ? Icons.favorite : Icons.favorite_border,
-                      color: isFav ? Colors.red : cs.outline,
-                      size: 22,
-                    ),
-                    onPressed: () async {
-                      await favoritesService.toggle(widget.recipe.title);
-                      setState(() {});
-                    },
-                    padding: EdgeInsets.zero,
-                    constraints: const BoxConstraints(),
-                    visualDensity: VisualDensity.compact,
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ]),
@@ -228,6 +247,8 @@ class _RecipeCardState extends State<RecipeCard> {
           ],
         ),
       ),
+    );
+      },
     );
   }
 }

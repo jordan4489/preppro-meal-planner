@@ -1,60 +1,56 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import '../../core/services/profile_service.dart';
+import '../../core/models/profile.dart';
+import '../../widgets/ad_banner.dart';
+
+class _NavItem {
+  final String route;
+  final IconData icon;
+  final String label;
+  const _NavItem(this.route, this.icon, this.label);
+}
 
 class AppShell extends StatelessWidget {
   final Widget child;
   const AppShell({super.key, required this.child});
 
-  int _indexFromLocation(String loc) {
-    if (loc.startsWith('/recipes')) return 1;
-    if (loc.startsWith('/plan')) return 2;
-    if (loc.startsWith('/shopping')) return 3;
-    if (loc.startsWith('/weight')) return 4;
-    return 0;
-  }
-
   @override
   Widget build(BuildContext context) {
     final loc = GoRouter.of(context).routerDelegate.currentConfiguration.uri.toString();
-    final idx = _indexFromLocation(loc);
 
-    return Scaffold(
-      body: child,
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => GoRouter.of(context).go('/plan'),
-        tooltip: 'Quick add',
-        child: const Icon(Icons.add),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: idx,
-        onTap: (i) {
-          switch (i) {
-            case 0:
-              context.go('/home');
-              break;
-            case 1:
-              context.go('/recipes');
-              break;
-            case 2:
-              context.go('/plan');
-              break;
-            case 3:
-              context.go('/shopping');
-              break;
-            case 4:
-              context.go('/weight');
-              break;
-          }
-        },
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.menu_book), label: 'Recipes'),
-          BottomNavigationBarItem(icon: Icon(Icons.calendar_month), label: 'Plan'),
-          BottomNavigationBarItem(icon: Icon(Icons.list_alt), label: 'Shopping'),
-          BottomNavigationBarItem(icon: Icon(Icons.monitor_weight), label: 'Weight'),
-        ],
-        type: BottomNavigationBarType.fixed,
-      ),
+    return FutureBuilder<Profile?>(
+      future: ProfileService.loadProfile(),
+      builder: (context, snap) {
+        final plannerOnly = snap.data?.plannerOnly ?? false;
+        final tabs = <_NavItem>[
+          const _NavItem('/home', Icons.home, 'Home'),
+          const _NavItem('/recipes', Icons.menu_book, 'Recipes'),
+          const _NavItem('/plan', Icons.calendar_month, 'Plan'),
+          const _NavItem('/shopping', Icons.list_alt, 'Shopping'),
+          if (!plannerOnly) const _NavItem('/weight', Icons.monitor_weight, 'Weight'),
+        ];
+        var currentIndex = tabs.indexWhere((t) => loc.startsWith(t.route));
+        if (currentIndex < 0) currentIndex = 0;
+
+        return Scaffold(
+          body: child,
+          bottomNavigationBar: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const AdBanner(),
+              BottomNavigationBar(
+                currentIndex: currentIndex,
+                onTap: (i) => context.go(tabs[i].route),
+                items: tabs
+                    .map((t) => BottomNavigationBarItem(icon: Icon(t.icon), label: t.label))
+                    .toList(),
+                type: BottomNavigationBarType.fixed,
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

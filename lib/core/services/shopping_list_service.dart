@@ -37,7 +37,8 @@ class ShoppingListService {
         continue;
       }
       for (final i in ings) {
-        final kName = i.name.trim().toLowerCase();
+        final rawName = i.name.trim().toLowerCase();
+        final kName = _normalizeName(rawName);
         final norm =
             _normalizeUnit(i.quantity, i.unit.trim().toLowerCase(), kName);
         map[kName] = (map[kName] ?? 0) + norm.$1 * servings;
@@ -73,6 +74,17 @@ class ShoppingListService {
   }
 
   static (double, String) _normalizeUnit(double q, String u, String name) {
+    final isEgg = name.contains('egg');
+    const eggSizeUnits = {
+      'large',
+      'small',
+      'medium',
+      'xl',
+      'extra-large',
+      'extra large',
+      'jumbo',
+      'extra jumbo',
+    };
     switch (u) {
       case 'kg':
       case 'kilogram':
@@ -115,8 +127,8 @@ class ShoppingListService {
       case 'cups':
         return (q, 'cup');
       default:
-        if (u.isEmpty &&
-            (name.contains('egg') ||
+        if ((u.isEmpty || (isEgg && eggSizeUnits.contains(u))) &&
+            (isEgg ||
                 name.contains('clove') ||
                 name.contains('lemon') ||
                 name.contains('lime'))) {
@@ -168,4 +180,90 @@ class ShoppingListService {
   }
 
   static String _oneDecimal(double v) => v.toStringAsFixed(v % 1 == 0 ? 0 : 1);
+
+  static String _normalizeName(String n) {
+    var name = n.toLowerCase().trim();
+    // Remove parenthetical notes (e.g., "(optional)")
+    name = name.replaceAll(RegExp(r'\(.*?\)'), '').trim();
+    // Remove trailing phrases
+    name = name.replaceAll(RegExp(r'\b(to taste|for garnish|optional|as needed)\b'), '').trim();
+
+    // Remove common descriptors
+    const descriptors = [
+      'large', 'small', 'medium', 'extra', 'extra virgin', 'virgin', 'low fat',
+      'reduced fat', 'lean', 'skinless', 'boneless', 'freshly', 'fine', 'finely',
+      'coarsely', 'free-range', 'organic', 'ripe', 'unsalted', 'salted',
+    ];
+    for (final d in descriptors) {
+      name = name.replaceAll(RegExp('\\b' + d + '\\b'), '').trim();
+    }
+
+    // Remove common preparation words
+    const prep = [
+      'scrambled',
+      'fried',
+      'boiled',
+      'poached',
+      'roasted',
+      'grilled',
+      'baked',
+      'chopped',
+      'diced',
+      'sliced',
+      'minced',
+      'ground',
+      'shredded',
+      'fresh',
+      'frozen',
+      'cooked',
+      'raw',
+      'smoked',
+    ];
+    for (final p in prep) {
+      name = name.replaceAll(RegExp('\\b' + p + '\\b'), '').trim();
+    }
+
+    // Normalize specific items
+    final directMap = <RegExp, String>{
+      RegExp(r'\\beggs?\\b'): 'egg',
+      RegExp(r'\\bmashed potatoes?\\b'): 'potato',
+      RegExp(r'\\bbaked potatoes?\\b'): 'potato',
+      RegExp(r'\\broast chicken\\b'): 'chicken',
+      RegExp(r'\\bcooked rice\\b'): 'rice',
+      RegExp(r'\\bcooked pasta\\b'): 'pasta',
+      RegExp(r'\\bgrated cheese\\b'): 'cheese',
+      RegExp(r'\\bshredded cheese\\b'): 'cheese',
+      RegExp(r'\\bchicken breasts?\\b'): 'chicken breast',
+      RegExp(r'\\bchicken thighs?\\b'): 'chicken thighs',
+      RegExp(r'\\bbeef mince(d)?\\b'): 'beef mince',
+      RegExp(r'\\bturkey mince(d)?\\b'): 'turkey mince',
+      RegExp(r'\\bground beef\\b'): 'beef mince',
+      RegExp(r'\\bground turkey\\b'): 'turkey mince',
+      RegExp(r'\\bscallions?\\b'): 'spring onion',
+      RegExp(r'\\bgreen onions?\\b'): 'spring onion',
+      RegExp(r'\\bbell peppers?\\b'): 'bell pepper',
+      RegExp(r'\\bchill?i peppers?\\b'): 'chili pepper',
+      RegExp(r'\\bpotatoes\\b'): 'potato',
+      RegExp(r'\\btomatoes\\b'): 'tomato',
+      RegExp(r'\\bmushrooms\\b'): 'mushroom',
+      RegExp(r'\\bonions\\b'): 'onion',
+      RegExp(r'\\bgarlic cloves?\\b'): 'garlic',
+      RegExp(r'\\bparmesan cheese\\b'): 'parmesan',
+      RegExp(r'\\bmozzarella cheese\\b'): 'mozzarella',
+      RegExp(r'\\bcheddar cheese\\b'): 'cheddar',
+      RegExp(r'\\bspaghetti\\b'): 'pasta',
+      RegExp(r'\\bpenne\\b'): 'pasta',
+      RegExp(r'\\bfusilli\\b'): 'pasta',
+      RegExp(r'\\btagliatelle\\b'): 'pasta',
+      RegExp(r'\\bnoodles?\\b'): 'noodles',
+      RegExp(r'\\bwraps?\\b'): 'wrap',
+      RegExp(r'\\btortillas?\\b'): 'tortilla',
+      RegExp(r'\\bflatbreads?\\b'): 'flatbread',
+    };
+    for (final entry in directMap.entries) {
+      if (entry.key.hasMatch(name)) return entry.value;
+    }
+
+    return name.replaceAll(RegExp('\\s+'), ' ').trim();
+  }
 }

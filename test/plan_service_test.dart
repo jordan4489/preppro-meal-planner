@@ -4,7 +4,7 @@ import 'package:preppro/core/models/recipe.dart';
 
 void main(){
   test('generate produces servings scaled to slot target', (){
-    final recipes = List.generate(10, (i)=> Recipe(id: 'r$i', title: 'R $i', isAirFryer:false, mealTypes: ['breakfast','lunch','dinner','snack'], tags: [], nutritionKcal: 400 + i*50, nutritionProtein: 20.0, ingredients: [], steps: []));
+    final recipes = List.generate(10, (i)=> Recipe(id: 'r$i', title: 'R $i', isAirFryer:false, mealTypes: ['breakfast','lunch','dinner','snack'], tags: [], nutritionKcal: 400 + i*50, nutritionProtein: 20.0, ingredients: [], steps: [], allergens: const {}));
     final plan = PlanService.generate(recipes: recipes, dailyTarget: 2000, days: 1, mealsPerDay: 3);
     expect(plan.days, isNotEmpty);
     final day = plan.days.first;

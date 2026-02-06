@@ -9,6 +9,18 @@ This document describes what’s needed to publish the Android and iOS apps and 
 - If `ANDROID_KEYSTORE` secret is set (base64-encoded keystore), the workflow writes `android/keystore.jks` and `android/key.properties` and signs the build.
 - If `GOOGLE_PLAY_SERVICE_ACCOUNT` secret is set (service account JSON content), the workflow uploads the AAB to the *internal* track of Google Play.
 
+### Local signing (manual)
+If you want to build a signed release locally without GitHub Actions:
+
+1) Create a keystore (example command):
+	- `keytool -genkeypair -v -keystore android/keystore.jks -storetype JKS -keyalg RSA -keysize 2048 -validity 10000 -alias preppro`
+2) Copy [android/key.properties.example](android/key.properties.example) to `android/key.properties` and fill in your values.
+3) Build: `flutter build appbundle --release`
+
+Notes:
+- Keep `android/key.properties` out of source control (already ignored in [android/.gitignore](android/.gitignore)).
+- If you store the keystore elsewhere, update `storeFile` in `android/key.properties`.
+
 ### Required repository secrets
 - `ANDROID_KEYSTORE` — base64-encoded keystore (.jks). Example: `base64 keystore.jks | pbcopy` and paste the result.
 - `ANDROID_KEYSTORE_PASSWORD` — keystore store password.

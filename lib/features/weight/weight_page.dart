@@ -52,75 +52,88 @@ class _S extends State<WeightPage> {
         ),
         title: const Text('Weight tracker'),
       ),
-        body: Stack(
-          children: [
-            Positioned.fill(
-              child: Opacity(
-                opacity: 0.05,
-                child: Transform.scale(
-                  scale: 0.6,
-                  child: Image.asset(
-                    'assets/images/PrepProBlue.png',
-                    fit: BoxFit.cover,
-                    alignment: Alignment.center,
-                    errorBuilder: (_, __, ___) => const SizedBox(),
+        body: SafeArea(
+          child: Stack(
+            children: [
+              Positioned.fill(
+                child: Opacity(
+                  opacity: 0.05,
+                  child: Transform.scale(
+                    scale: 0.6,
+                    child: Image.asset(
+                      'assets/images/PrepProBlue.png',
+                      fit: BoxFit.cover,
+                      alignment: Alignment.center,
+                      errorBuilder: (_, __, ___) => const SizedBox(),
+                    ),
                   ),
                 ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(children: [
-              Row(children: [
-                Expanded(
-                    child: TextField(
-                        controller: _controller,
-                        keyboardType: const TextInputType.numberWithOptions(
-                            decimal: true),
-                        decoration: const InputDecoration(
-                            labelText: "Today's weight (kg)"))),
-                const SizedBox(width: 12),
-                FilledButton(
-                    onPressed: _saving ? null : _save,
-                    child:
-                        _saving ? const Text('Saving...') : const Text('Save'))
-              ]),
-              const SizedBox(height: 24),
-              // Progress Overview
-              if (_entries.isNotEmpty) ...[
-                _WeightProgressCard(entries: _entries),
-                const SizedBox(height: 16),
-              ],
-              // Entries list header
-              Row(
-                children: [
-                  const Icon(Icons.history),
-                  const SizedBox(width: 8),
-                  Text(
-                    'Weight History',
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 12),
-              Expanded(
-                  child: _entries.isEmpty
-                      ? const Center(child: Text('No entries yet.'))
-                      : ListView.separated(
-                          itemCount: _entries.length,
-                          separatorBuilder: (_, __) => const Divider(height: 1),
-                          itemBuilder: (_, i) {
-                            final e = _entries[i];
-                            return ListTile(
+              LayoutBuilder(
+                builder: (context, constraints) => SingleChildScrollView(
+                  padding: const EdgeInsets.all(16),
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                    child: Column(
+                      children: [
+                        Row(children: [
+                          Expanded(
+                            child: TextField(
+                              controller: _controller,
+                              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                              decoration: const InputDecoration(labelText: "Today's weight (kg)"),
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          FilledButton(
+                            onPressed: _saving ? null : _save,
+                            child: _saving ? const Text('Saving...') : const Text('Save'),
+                          )
+                        ]),
+                        const SizedBox(height: 24),
+                        if (_entries.isNotEmpty) ...[
+                          _WeightProgressCard(entries: _entries),
+                          const SizedBox(height: 16),
+                        ],
+                        Row(
+                          children: [
+                            const Icon(Icons.history),
+                            const SizedBox(width: 8),
+                            Text(
+                              'Weight History',
+                              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 12),
+                        if (_entries.isEmpty)
+                          const Center(child: Text('No entries yet.'))
+                        else
+                          ListView.separated(
+                            itemCount: _entries.length,
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            separatorBuilder: (_, __) => const Divider(height: 1),
+                            itemBuilder: (_, i) {
+                              final e = _entries[i];
+                              return ListTile(
                                 leading: const Icon(Icons.monitor_weight),
                                 title: Text('${e.weightKg} kg'),
-                                subtitle: Text(e.date));
-                          }))
-            ])),
-          ],
-        ));
+                                subtitle: Text(e.date),
+                              );
+                            },
+                          )
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
   }
 }
 
@@ -265,9 +278,9 @@ class _StatBox extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: color.withOpacity(0.3)),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
       child: Column(
         children: [

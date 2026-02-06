@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AuthService {
@@ -14,6 +15,13 @@ class AuthService {
   // Auth state stream
   static Stream<User?> get authStateChanges => _auth.authStateChanges();
 
+  // Ensure auth persistence (especially on web)
+  static Future<void> ensurePersistence() async {
+    if (kIsWeb) {
+      await _auth.setPersistence(Persistence.LOCAL);
+    }
+  }
+
   // Sign up with email and password
   static Future<String?> signUp({
     required String email,
@@ -21,24 +29,31 @@ class AuthService {
     required String displayName,
   }) async {
     try {
+      await ensurePersistence();
       final userCredential = await _auth.createUserWithEmailAndPassword(
         email: email,
         password: password,
-      );
+      ).timeout(const Duration(seconds: 30));
 
       await userCredential.user?.updateDisplayName(displayName);
 
-      // Create user document in Firestore
-      await _firestore.collection('users').doc(userCredential.user!.uid).set({
+      // Create user document in Firestore (non-blocking)
+      _firestore.collection('users').doc(userCredential.user!.uid).set({
         'email': email,
         'displayName': displayName,
         'createdAt': FieldValue.serverTimestamp(),
         'updatedAt': FieldValue.serverTimestamp(),
+      }).catchError((error) {
+        print('Firestore user document creation failed: $error');
       });
 
       return null; // Success
     } on FirebaseAuthException catch (e) {
+      print('Firebase Auth Error: ${e.code} - ${e.message}');
       return e.message ?? 'Sign up failed';
+    } catch (e) {
+      print('Sign up error: $e');
+      return 'Connection error. Check your internet and try again.';
     }
   }
 
@@ -48,13 +63,18 @@ class AuthService {
     required String password,
   }) async {
     try {
+      await ensurePersistence();
       await _auth.signInWithEmailAndPassword(
         email: email,
         password: password,
-      );
+      ).timeout(const Duration(seconds: 30));
       return null; // Success
     } on FirebaseAuthException catch (e) {
+      print('Firebase Auth Error: ${e.code} - ${e.message}');
       return e.message ?? 'Sign in failed';
+    } catch (e) {
+      print('Sign in error: $e');
+      return 'Connection error. Check your internet and try again.';
     }
   }
 

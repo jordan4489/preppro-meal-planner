@@ -67,7 +67,7 @@ class _LoginPageState extends State<LoginPage> {
                 Image.asset('assets/images/PrepProBlue.png', height: 80),
                 const SizedBox(height: 32),
                 const Text(
-                  'Welcome Back',
+                  'Welcome',
                   style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                   textAlign: TextAlign.center,
                 ),

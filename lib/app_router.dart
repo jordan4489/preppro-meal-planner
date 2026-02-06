@@ -1,6 +1,4 @@
-import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:provider/provider.dart';
 import 'features/shell/app_shell.dart';
 import 'core/providers/auth_provider.dart';
 
@@ -15,22 +13,20 @@ import 'features/profile/profile_page.dart';
 import 'features/auth/login_page.dart';
 import 'features/auth/signup_page.dart';
 
-final appRouter = GoRouter(
+GoRouter createRouter(AuthProvider authProvider) {
+  return GoRouter(
+  refreshListenable: authProvider,
   redirect: (context, state) {
-    final authProvider = context.read<AuthProvider>();
     final isLoggedIn = authProvider.isLoggedIn;
     
-    // If user is not logged in and not on auth pages, redirect to login
-    if (!isLoggedIn) {
-      if (state.matchedLocation == '/login' || state.matchedLocation == '/signup') {
-        return null; // Allow auth pages
-      }
-      return '/login';
+    // If already logged in, keep user out of auth pages
+    if (state.matchedLocation == '/login' || state.matchedLocation == '/signup') {
+      return isLoggedIn ? '/home' : null;
     }
     
-    // If user is logged in and on auth pages, redirect to home
-    if (isLoggedIn && (state.matchedLocation == '/login' || state.matchedLocation == '/signup')) {
-      return '/home';
+    // If user is not logged in and trying to access protected pages, redirect to login
+    if (!isLoggedIn) {
+      return '/login';
     }
     
     return null;
@@ -65,5 +61,6 @@ final appRouter = GoRouter(
     ),
     GoRoute(path: '/onboarding', builder: (_, __) => const OnboardingPage()),
   ],
-);
+  );
+}
 

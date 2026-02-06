@@ -6,6 +6,7 @@ import '../../core/models/recipe.dart';
 import '../../core/services/plan_service.dart';
 import '../../core/services/profile_service.dart';
 import '../../core/services/plan_store.dart';
+import '../../core/services/personalization_service.dart';
 
 
 class PlanPage extends StatefulWidget {
@@ -17,10 +18,12 @@ class PlanPage extends StatefulWidget {
 class _PlanState extends State<PlanPage> {
   bool generating = false;
   int? targetKcal;
+  bool _plannerOnly = false;
   List<DayPlan>? plan;
   List<Recipe> all = [];
   final Map<String, bool> _eaten = {};
-  final List<double> split = const [0.22, 0.10, 0.28, 0.10, 0.30];
+  List<double> _split = const [0.22, 0.10, 0.28, 0.10, 0.30];
+  int _mealsPerDay = 5;
   final Set<String> prefProteins = {};
   final Set<String> dietaryReqs = {};
   final _opts = const [
@@ -44,6 +47,133 @@ class _PlanState extends State<PlanPage> {
     'halal',
     'kosher'
   ];
+
+  static const _fishKeywords = [
+    'fish',
+    'salmon',
+    'cod',
+    'tuna',
+    'mackerel',
+    'haddock',
+    'bass',
+    'sea bass',
+    'seabass',
+    'trout',
+    'sardine',
+    'sardines',
+    'tilapia',
+    'halibut',
+    'snapper',
+    'mahi',
+    'mahi-mahi',
+    'swordfish',
+    'catfish',
+    'pollock',
+    'hake',
+    'sole',
+    'anchovy',
+    'anchovies',
+    'herring'
+  ];
+  static const _seafoodKeywords = [
+    'prawn',
+    'prawns',
+    'shrimp',
+    'scallop',
+    'crab',
+    'lobster',
+    'seafood',
+    'mussel',
+    'mussels',
+    'clam',
+    'clams',
+    'octopus',
+    'squid',
+    'calamari'
+  ];
+  static const _dairyKeywords = [
+    'milk',
+    'cheese',
+    'cream',
+    'butter',
+    'yogurt',
+    'yoghurt',
+    'ghee',
+    'whey',
+    'casein',
+    'curd',
+    'paneer',
+    'ricotta',
+    'mozzarella',
+    'parmesan',
+    'cheddar',
+    'feta',
+    'halloumi',
+    'sour cream',
+    'cream cheese',
+    'creme',
+    'crème'
+  ];
+  static const _glutenKeywords = [
+    'bread',
+    'pasta',
+    'flour',
+    'wheat',
+    'noodle',
+    'breadcrumbs',
+    'couscous',
+    'semolina',
+    'bulgur',
+    'farro',
+    'spelt',
+    'rye',
+    'barley',
+    'malt'
+  ];
+  static const _meatKeywords = [
+    'chicken',
+    'beef',
+    'pork',
+    'lamb',
+    'turkey',
+    'bacon',
+    'ham',
+    'sausage',
+    'fish',
+    'seafood',
+    'prawn',
+    'prawns',
+    'shrimp',
+    'crab',
+    'lobster',
+    'scallop',
+    'mussel',
+    'mussels',
+    'clam',
+    'clams',
+    'octopus',
+    'squid',
+    'calamari',
+    'tuna',
+    'salmon',
+    'cod',
+    'anchovy',
+    'anchovies',
+    'sardine',
+    'sardines',
+    'tilapia',
+    'halibut',
+    'snapper',
+    'mahi',
+    'mahi-mahi',
+    'swordfish',
+    'catfish',
+    'pollock',
+    'haddock',
+    'trout',
+    'mackerel',
+    'herring'
+  ];
   @override
   void initState() {
     super.initState();
@@ -52,6 +182,8 @@ class _PlanState extends State<PlanPage> {
 
   Future<void> _init() async {
     targetKcal = await ProfileService.computeDailyTarget();
+    final profile = await ProfileService.loadProfile();
+    _plannerOnly = profile?.plannerOnly ?? false;
     all = await RecipeLoader.load();
     final saved = await ProfileService.loadPreferredProteins();
     prefProteins
@@ -93,6 +225,10 @@ class _PlanState extends State<PlanPage> {
         if (days.isNotEmpty) {
           setState(() {
             plan = days;
+            _mealsPerDay = days.first.meals.length;
+            _split = _mealsPerDay == 3
+                ? const [0.30, 0.35, 0.35]
+                : const [0.22, 0.10, 0.28, 0.10, 0.30];
           });
           return;
         }
@@ -104,12 +240,7 @@ class _PlanState extends State<PlanPage> {
   }
 
   String _proteinOf(Recipe r) {
-    final hay = (r.title +
-            ' ' +
-            r.tags.join(' ') +
-            ' ' +
-            (r.ingredients ?? []).map((e) => e.name).join(' '))
-        .toLowerCase();
+    final hay = _recipeHaystack(r);
     bool has(List<String> k) => k.any((x) => hay.contains(x));
     if (has(['chicken'])) return 'chicken';
     if (has(['turkey'])) return 'turkey';
@@ -118,18 +249,8 @@ class _PlanState extends State<PlanPage> {
     if (has(['pork'])) return 'pork';
     if (has(['egg', 'eggs'])) return 'eggs';
     if (has(['tofu', 'tempeh'])) return 'tofu/tempeh';
-    if (has([
-      'salmon',
-      'cod',
-      'tuna',
-      'mackerel',
-      'haddock',
-      'bass',
-      'trout',
-      'sardine'
-    ])) return 'fish';
-    if (has(
-        ['prawn', 'prawns', 'shrimp', 'scallop', 'crab', 'lobster', 'seafood']))
+    if (has(_fishKeywords)) return 'fish';
+    if (has(_seafoodKeywords))
       return 'seafood';
     if (has(['vegan', 'vegetarian', 'veggie', 'plant'])) return 'veggie';
     return 'veggie';
@@ -137,55 +258,67 @@ class _PlanState extends State<PlanPage> {
 
   List<Recipe> _applyPref(List<Recipe> src) {
     if (prefProteins.isEmpty) return src;
-    return src.where((r) => prefProteins.contains(_proteinOf(r))).toList();
+    return src.where((r) {
+      final p = _proteinOf(r);
+      if (prefProteins.contains(p)) return false;
+      final hay = _recipeHaystack(r);
+      if (prefProteins.contains('fish') && _fishKeywords.any(hay.contains)) {
+        return false;
+      }
+      if (prefProteins.contains('seafood') && _seafoodKeywords.any(hay.contains)) {
+        return false;
+      }
+      return true;
+    }).toList();
+  }
+
+  String _recipeHaystack(Recipe r) {
+    return (r.title +
+            ' ' +
+            r.displayTitle +
+            ' ' +
+            r.tags.join(' ') +
+            ' ' +
+            (r.ingredients ?? []).map((e) => e.name).join(' '))
+        .toLowerCase();
+  }
+
+  List<Recipe> _applyPrefWithFallback(List<Recipe> src) {
+    if (prefProteins.isEmpty) return src;
+    return _applyPref(src);
   }
 
   List<Recipe> _applyDietary(List<Recipe> src) {
     if (dietaryReqs.isEmpty) return src;
     return src.where((r) {
       final titleLower = r.title.toLowerCase();
+      final displayTitleLower = r.displayTitle.toLowerCase();
       final tagsLower = r.tags.map((e) => e.toLowerCase()).join(' ');
       final ingredientsLower = (r.ingredients ?? [])
           .map((e) => e.name.toLowerCase())
           .join(' ');
-      final combined = '$titleLower $tagsLower $ingredientsLower';
+      final combined = '$titleLower $displayTitleLower $tagsLower $ingredientsLower';
       
+      bool hasAny(List<String> k) => k.any((x) => combined.contains(x));
+      bool hasAllergen(String a) => r.allergens.contains(a);
       return dietaryReqs.every((diet) {
         switch (diet) {
           case 'vegetarian':
-            return !combined.contains('chicken') &&
-                !combined.contains('beef') &&
-                !combined.contains('pork') &&
-                !combined.contains('lamb') &&
-                !combined.contains('fish') &&
-                !combined.contains('seafood') &&
-                !combined.contains('turkey');
+            return !hasAny(_meatKeywords);
           case 'vegan':
-            return !combined.contains('chicken') &&
-                !combined.contains('beef') &&
-                !combined.contains('pork') &&
-                !combined.contains('lamb') &&
-                !combined.contains('fish') &&
-                !combined.contains('seafood') &&
-                !combined.contains('turkey') &&
+            return !hasAny(_meatKeywords) &&
+                !hasAny(_dairyKeywords) &&
+                !hasAllergen('dairy') &&
+                !hasAllergen('egg') &&
+                !hasAllergen('fish') &&
+                !hasAllergen('shellfish') &&
                 !combined.contains('egg') &&
-                !combined.contains('milk') &&
-                !combined.contains('cheese') &&
-                !combined.contains('yogurt') &&
-                !combined.contains('cream') &&
-                !combined.contains('butter');
+                !combined.contains('honey') &&
+                !combined.contains('gelatin');
           case 'gluten-free':
-            return !combined.contains('bread') &&
-                !combined.contains('pasta') &&
-                !combined.contains('flour') &&
-                !combined.contains('wheat') &&
-                !combined.contains('noodle');
+            return !hasAny(_glutenKeywords) && !hasAllergen('gluten');
           case 'dairy-free':
-            return !combined.contains('milk') &&
-                !combined.contains('cheese') &&
-                !combined.contains('yogurt') &&
-                !combined.contains('cream') &&
-                !combined.contains('butter');
+            return !hasAny(_dairyKeywords) && !hasAllergen('dairy');
           case 'low-carb':
             return r.nutritionKcal > 0 &&
                 ((r.nutritionProtein * 4) / r.nutritionKcal) > 0.3;
@@ -250,7 +383,7 @@ class _PlanState extends State<PlanPage> {
         ..clear()
         ..addAll(savedDietary);
     });
-    if (targetKcal == null) {
+    if (targetKcal == null && !_plannerOnly) {
       _toast('Set your goal on the profile page first.');
       return;
     }
@@ -265,14 +398,15 @@ class _PlanState extends State<PlanPage> {
     
     // Apply dietary filter first (affects all recipes including snacks)
     var filtered = _applyDietary(all);
-    
-    // Apply protein filter to main meals, but keep all snacks available
-    final filteredMain = _applyPref(filtered);
-    final allSnacks = filtered.where((r) => r.mealTypes.any((m) => m.toLowerCase() == 'snack')).toList();
-    
-    // Combine: filtered main meals + all snacks for maximum flexibility
-    final mainMeals = filteredMain.where((r) => 
-      !r.mealTypes.any((m) => m.toLowerCase() == 'snack')).toList();
+    final prefFiltered = _applyPrefWithFallback(filtered);
+
+    // Apply protein filter across all meals (fallback to dietary if no matches)
+    final allSnacks = prefFiltered
+      .where((r) => r.mealTypes.any((m) => m.toLowerCase() == 'snack'))
+      .toList();
+    final mainMeals = prefFiltered
+      .where((r) => !r.mealTypes.any((m) => m.toLowerCase() == 'snack'))
+      .toList();
     final source = [...mainMeals, ...allSnacks];
     
     if (source.isEmpty) {
@@ -283,13 +417,22 @@ class _PlanState extends State<PlanPage> {
       return;
     }
     try {
+      final prefs = await PersonalizationService.getRecipeScores();
+      final hasSnacks = source.any(
+          (r) => r.mealTypes.any((m) => m.toLowerCase() == 'snack'));
+      final mealsPerDay = hasSnacks ? 5 : 3;
+      final split = hasSnacks
+          ? const [0.22, 0.10, 0.28, 0.10, 0.30]
+          : const [0.30, 0.35, 0.35];
       final week = PlanService.generate(
           recipes: source,
-          dailyTarget: targetKcal!,
+          dailyTarget: targetKcal ?? _effectiveTarget(),
           days: 7,
-          mealsPerDay: 5,
+          mealsPerDay: mealsPerDay,
           split: split,
-          maxRepeatsPerWeek: 1);
+          maxRepeatsPerWeek: 1,
+          preferenceScores: prefs,
+          maxBurgersPerWeek: 3);
       _eaten.clear();
       final ids = week.days
           .map((d) => d.meals.map((m) => {'id': m.recipe.id, 'servings': m.servings}).toList())
@@ -306,6 +449,8 @@ class _PlanState extends State<PlanPage> {
       setState(() {
         plan = week.days;
         generating = false;
+        _mealsPerDay = mealsPerDay;
+        _split = split;
       });
       _toast('Plan generated & saved.');
     } on StateError catch (e) {
@@ -321,109 +466,125 @@ class _PlanState extends State<PlanPage> {
     showModalBottomSheet(
         context: context,
         showDragHandle: true,
+        isScrollControlled: true,
         builder: (ctx) {
           final local = Set<String>.from(prefProteins);
           return StatefulBuilder(
-              builder: (c, setM) => Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
-                  child: Column(mainAxisSize: MainAxisSize.min, children: [
-                    const Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text('Preferred proteins',
-                            style: TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.w600))),
-                    const SizedBox(height: 8),
-                    Wrap(
-                        spacing: 8,
-                        runSpacing: 4,
-                        children: _opts
-                            .map((p) => FilterChip(
-                                label: Text(p,
-                                    style: const TextStyle(fontSize: 15)),
-                                selected: local.contains(p),
-                                onSelected: (s) => setM(
-                                    () => s ? local.add(p) : local.remove(p))))
-                            .toList()),
-                    const SizedBox(height: 12),
-                    Row(children: [
-                      Expanded(
-                          child: FilledButton.icon(
-                              onPressed: () async {
-                                setState(() {
-                                  prefProteins
-                                    ..clear()
-                                    ..addAll(local);
-                                });
-                                await ProfileService.savePreferredProteins(
-                                    prefProteins);
-                                if (mounted) {
-                                  Navigator.pop(context);
-                                  _toast(prefProteins.isEmpty
-                                      ? 'Using all proteins'
-                                      : 'Saved: ' + prefProteins.join(', '));
-                                }
-                              },
-                              icon: const Icon(Icons.check),
-                              label: const Text('Apply')))
-                    ])
-                  ])));
+              builder: (c, setM) => SingleChildScrollView(
+                    padding: EdgeInsets.fromLTRB(
+                      16,
+                      8,
+                      16,
+                      16 + MediaQuery.of(c).viewInsets.bottom,
+                    ),
+                    child: Column(mainAxisSize: MainAxisSize.min, children: [
+                      const Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text('Exclude proteins',
+                              style: TextStyle(
+                                  fontSize: 16, fontWeight: FontWeight.w600))),
+                      const SizedBox(height: 8),
+                      Wrap(
+                          spacing: 8,
+                          runSpacing: 4,
+                          children: _opts
+                              .map((p) => FilterChip(
+                                  label: Text(p,
+                                      style: const TextStyle(fontSize: 15)),
+                                  selected: local.contains(p),
+                                  onSelected: (s) => setM(() =>
+                                      s ? local.add(p) : local.remove(p))))
+                              .toList()),
+                      const SizedBox(height: 12),
+                      Row(children: [
+                        Expanded(
+                            child: FilledButton.icon(
+                                onPressed: () async {
+                                  setState(() {
+                                    prefProteins
+                                      ..clear()
+                                      ..addAll(local);
+                                    plan = null;
+                                  });
+                                  await ProfileService.savePreferredProteins(
+                                      prefProteins);
+                                  if (mounted) {
+                                    Navigator.pop(context);
+                                      _toast(prefProteins.isEmpty
+                                        ? 'No proteins excluded. Generate a new plan.'
+                                        : 'Excluded: ' + prefProteins.join(', ') + '. Generate a new plan.');
+                                  }
+                                },
+                                icon: const Icon(Icons.check),
+                                label: const Text('Apply')))
+                      ])
+                    ])));
         });
   }
   void _openDietarySelector() {
     showModalBottomSheet(
         context: context,
         showDragHandle: true,
+        isScrollControlled: true,
         builder: (ctx) {
           final local = Set<String>.from(dietaryReqs);
           return StatefulBuilder(
-              builder: (c, setM) => Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
-                  child: Column(mainAxisSize: MainAxisSize.min, children: [
-                    Row(
-                      children: [
-                        const Icon(Icons.restaurant_menu, size: 20),
-                        const SizedBox(width: 8),
-                        const Text('Dietary Requirements',
-                            style: TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.w600)),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    Wrap(
-                        spacing: 8,
-                        runSpacing: 4,
-                        children: _dietaryOpts
-                            .map((d) => FilterChip(
-                                label: Text(
-                                    d.split('-').map((w) => w[0].toUpperCase() + w.substring(1)).join(' '),
-                                    style: const TextStyle(fontSize: 15)),
-                                selected: local.contains(d),
-                                onSelected: (s) => setM(
-                                    () => s ? local.add(d) : local.remove(d))))
-                            .toList()),
-                    const SizedBox(height: 12),
-                    Row(children: [
-                      Expanded(
-                          child: FilledButton.icon(
-                              onPressed: () async {
-                                setState(() {
-                                  dietaryReqs
-                                    ..clear()
-                                    ..addAll(local);
-                                });
-                                await ProfileService.saveDietaryRequirements(
-                                    dietaryReqs);
-                                if (mounted) {
-                                  Navigator.pop(context);
-                                  _toast(dietaryReqs.isEmpty
-                                      ? 'No dietary restrictions'
-                                      : 'Saved: ' + dietaryReqs.map((d) => d.split('-').map((w) => w[0].toUpperCase() + w.substring(1)).join(' ')).join(', '));
-                                }
-                              },
-                              icon: const Icon(Icons.check),
-                              label: const Text('Apply')))
-                    ])
-                  ])));
+              builder: (c, setM) => DraggableScrollableSheet(
+                expand: false,
+                builder: (context, scrollController) => SafeArea(
+                  child: ListView(
+                    controller: scrollController,
+                    padding: EdgeInsets.fromLTRB(
+                        16, 8, 16, 16 + MediaQuery.of(ctx).viewInsets.bottom),
+                    children: [
+                      Row(
+                        children: [
+                          const Icon(Icons.restaurant_menu, size: 20),
+                          const SizedBox(width: 8),
+                          const Text('Dietary Requirements',
+                              style: TextStyle(
+                                  fontSize: 16, fontWeight: FontWeight.w600)),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      Wrap(
+                          spacing: 8,
+                          runSpacing: 4,
+                          children: _dietaryOpts
+                              .map((d) => FilterChip(
+                                  label: Text(
+                                      d.split('-').map((w) => w[0].toUpperCase() + w.substring(1)).join(' '),
+                                      style: const TextStyle(fontSize: 15)),
+                                  selected: local.contains(d),
+                                  onSelected: (s) => setM(
+                                      () => s ? local.add(d) : local.remove(d))))
+                              .toList()),
+                      const SizedBox(height: 12),
+                      Row(children: [
+                        Expanded(
+                            child: FilledButton.icon(
+                                onPressed: () async {
+                                  setState(() {
+                                    dietaryReqs
+                                      ..clear()
+                                      ..addAll(local);
+                                  });
+                                  await ProfileService.saveDietaryRequirements(
+                                      dietaryReqs);
+                                  if (mounted) {
+                                    Navigator.pop(context);
+                                    _toast(dietaryReqs.isEmpty
+                                        ? 'No dietary restrictions'
+                                        : 'Saved: ' + dietaryReqs.map((d) => d.split('-').map((w) => w[0].toUpperCase() + w.substring(1)).join(' ')).join(', '));
+                                  }
+                                },
+                                icon: const Icon(Icons.check),
+                                label: const Text('Apply')))
+                      ])
+                    ],
+                  ),
+                ),
+              ));
         });
   }
   Future<void> _showMealActions(int dayIndex, int mealIndex) async {
@@ -494,28 +655,44 @@ class _PlanState extends State<PlanPage> {
     var dietaryFiltered = _applyDietary(all);
     
     // For snacks, don't apply protein filter if it would result in no options
-    final isSnack = idx == 1 || idx == 3;
-    final base = isSnack ? dietaryFiltered : _applyPref(dietaryFiltered);
+    final isSnack = _mealsPerDay == 5 && (idx == 1 || idx == 3);
+    final base = _applyPrefWithFallback(dietaryFiltered);
     
     String t;
-    switch (idx) {
-      case 0:
-        t = 'breakfast';
-        break;
-      case 1:
-        t = 'snack';
-        break;
-      case 2:
-        t = 'lunch';
-        break;
-      case 3:
-        t = 'snack';
-        break;
-      case 4:
-        t = 'dinner';
-        break;
-      default:
-        t = '';
+    if (_mealsPerDay == 3) {
+      switch (idx) {
+        case 0:
+          t = 'breakfast';
+          break;
+        case 1:
+          t = 'lunch';
+          break;
+        case 2:
+          t = 'dinner';
+          break;
+        default:
+          t = '';
+      }
+    } else {
+      switch (idx) {
+        case 0:
+          t = 'breakfast';
+          break;
+        case 1:
+          t = 'snack';
+          break;
+        case 2:
+          t = 'lunch';
+          break;
+        case 3:
+          t = 'snack';
+          break;
+        case 4:
+          t = 'dinner';
+          break;
+        default:
+          t = '';
+      }
     }
     if (t.isEmpty) return const <Recipe>[];
     final filtered = base
@@ -524,10 +701,13 @@ class _PlanState extends State<PlanPage> {
     
     // If filtering resulted in no snacks, fall back to all dietary-filtered snacks
     if (isSnack && filtered.isEmpty) {
-      final dietaryFiltered = _applyDietary(all);
-      return dietaryFiltered
+      final dietaryFallback = _applyDietary(all);
+      final fallbackSnacks = dietaryFallback
           .where((r) => r.mealTypes.any((m) => m.toLowerCase() == t))
           .toList();
+      if (fallbackSnacks.isNotEmpty) return fallbackSnacks;
+      // Final fallback: allow any pref-filtered meals to fill snack slots
+      return base;
     }
     
     return filtered;
@@ -550,7 +730,7 @@ class _PlanState extends State<PlanPage> {
       _toast('No plan or recipes available.');
       return;
     }
-    if (targetKcal == null) {
+    if (targetKcal == null && !_plannerOnly) {
       _toast('Set your daily target first.');
       return;
     }
@@ -559,7 +739,7 @@ class _PlanState extends State<PlanPage> {
     final current = day.meals[mi].recipe;
     final currentK = current.nutritionKcal;
     final currentP = current.nutritionProtein;
-    final slotTarget = (targetKcal! * split[mi]).round();
+    final slotTarget = ((targetKcal ?? _effectiveTarget()) * _split[mi]).round();
     final usedToday = day.meals.map((m) => m.recipe.id).toSet();
     final usage = _usage();
     final pool = _poolForSlot(mi);
@@ -574,7 +754,7 @@ class _PlanState extends State<PlanPage> {
     for (final cand in candidates) {
       final newDay = dayBefore - currentK + cand.nutritionKcal;
       final slotPenalty = (cand.nutritionKcal - slotTarget).abs().toDouble();
-      final dayPenalty = (newDay - targetKcal!).abs().toDouble();
+      final dayPenalty = (newDay - (targetKcal ?? _effectiveTarget())).abs().toDouble();
       final proteinGain = (cand.nutritionProtein - currentP);
       final repeatPenalty = (usage[cand.id] ?? 0) >= 2 ? 200.0 : 0.0;
       final dupPenalty = usedToday.contains(cand.id) ? 500.0 : 0.0;
@@ -598,23 +778,29 @@ class _PlanState extends State<PlanPage> {
     final ids =
         plan!.map((d) => d.meals.map((m) => {'id': m.recipe.id, 'servings': m.servings}).toList()).toList();
     await PlanStore.save(ids);
-    _toast('Replaced with: ' + pick.title);
+    _toast('Replaced with: ' + pick.displayTitle);
   }
 
   void _toast(String s) =>
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(s)));
 
+  int _effectiveTarget() => 2000;
+
   Future<void> _editTarget() async {
     // Open profile for editing; computed daily target will be refreshed on return
     context.go('/profile');
     final v = await ProfileService.computeDailyTarget();
-    setState(() => targetKcal = v);
+    final profile = await ProfileService.loadProfile();
+    setState(() {
+      targetKcal = v;
+      _plannerOnly = profile?.plannerOnly ?? false;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     final t = targetKcal;
-    const labels = ['B', 'S', 'L', 'S', 'D'];
+    final labels = _mealsPerDay == 3 ? ['B', 'L', 'D'] : ['B', 'S', 'L', 'S', 'D'];
     return Scaffold(
         appBar: AppBar(
           leading: IconButton(
@@ -672,15 +858,15 @@ class _PlanState extends State<PlanPage> {
                 ],
                 const SizedBox(height: 8),
               ],
-              _Target(targetKcal: t, onEdit: _editTarget),
-              if (plan != null && t != null) ...[
+              _Target(targetKcal: t, onEdit: _editTarget, plannerOnly: _plannerOnly),
+              if (plan != null && t != null && !_plannerOnly) ...[
                 const SizedBox(height: 6),
                 Card(
                   elevation: 0,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                     side: BorderSide(
-                      color: Theme.of(context).colorScheme.outlineVariant.withOpacity(0.5),
+                      color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5),
                       width: 1,
                     ),
                   ),
@@ -745,7 +931,7 @@ class _PlanState extends State<PlanPage> {
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(16),
                                   side: BorderSide(
-                                    color: Theme.of(context).colorScheme.outlineVariant.withOpacity(0.5),
+                                    color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.5),
                                     width: 1,
                                   ),
                                 ),
@@ -806,8 +992,8 @@ class _PlanState extends State<PlanPage> {
                                             decoration: BoxDecoration(
                                               color: Theme.of(context)
                                                   .colorScheme
-                                                  .surfaceVariant
-                                                  .withOpacity(0.3),
+                                                  .surfaceContainerHighest
+                                                  .withValues(alpha: 0.3),
                                               borderRadius: BorderRadius.circular(8),
                                             ),
                                             child: Row(
@@ -880,7 +1066,7 @@ class _PlanState extends State<PlanPage> {
                                                   ),
                                                 ),
                                                 title: Text(
-                                                  d.meals[i].recipe.title,
+                                                  d.meals[i].recipe.displayTitle,
                                                   style: Theme.of(context)
                                                       .textTheme
                                                       .titleSmall
@@ -982,7 +1168,8 @@ class _MacroChip extends StatelessWidget {
 class _Target extends StatelessWidget {
   final int? targetKcal;
   final VoidCallback onEdit;
-  const _Target({required this.targetKcal, required this.onEdit});
+  final bool plannerOnly;
+  const _Target({required this.targetKcal, required this.onEdit, required this.plannerOnly});
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
@@ -1001,7 +1188,7 @@ class _Target extends StatelessWidget {
         child: Row(
           children: [
             Icon(
-              Icons.flag,
+              plannerOnly ? Icons.restaurant_menu : Icons.flag,
               size: 28,
               color: cs.primary,
             ),
@@ -1011,14 +1198,16 @@ class _Target extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Daily Target',
+                    plannerOnly ? 'Meal planner mode' : 'Daily Target',
                     style: Theme.of(context).textTheme.titleSmall?.copyWith(
                       color: cs.onSurfaceVariant,
                     ),
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    targetKcal == null ? 'Not set' : '$targetKcal kcal',
+                    plannerOnly
+                        ? 'No calorie target required'
+                        : (targetKcal == null ? 'Not set' : '$targetKcal kcal'),
                     style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
@@ -1026,10 +1215,11 @@ class _Target extends StatelessWidget {
                 ],
               ),
             ),
-            FilledButton.tonal(
-              onPressed: onEdit,
-              child: const Text('Edit'),
-            ),
+            if (!plannerOnly)
+              FilledButton.tonal(
+                onPressed: onEdit,
+                child: const Text('Edit'),
+              ),
           ],
         ),
       ),
@@ -1049,7 +1239,7 @@ class _EmptyHint extends StatelessWidget {
             Icon(
               Icons.restaurant_menu,
               size: 80,
-              color: Theme.of(context).colorScheme.primary.withOpacity(0.3),
+              color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
             ),
             const SizedBox(height: 24),
             Text(
@@ -1091,7 +1281,7 @@ class _ProteinFilterBanner extends StatelessWidget {
       decoration: BoxDecoration(
         gradient: isFiltered
             ? LinearGradient(
-                colors: [cs.primaryContainer, cs.primaryContainer.withOpacity(0.7)],
+                colors: [cs.primaryContainer, cs.primaryContainer.withValues(alpha: 0.7)],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               )
@@ -1099,13 +1289,13 @@ class _ProteinFilterBanner extends StatelessWidget {
         color: isFiltered ? null : cs.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: isFiltered ? cs.primary.withOpacity(0.3) : cs.outlineVariant.withOpacity(0.5),
+          color: isFiltered ? cs.primary.withValues(alpha: 0.3) : cs.outlineVariant.withValues(alpha: 0.5),
           width: isFiltered ? 2 : 1,
         ),
         boxShadow: isFiltered
             ? [
                 BoxShadow(
-                  color: cs.primary.withOpacity(0.15),
+                  color: cs.primary.withValues(alpha: 0.15),
                   blurRadius: 12,
                   offset: const Offset(0, 4),
                 ),
@@ -1122,7 +1312,7 @@ class _ProteinFilterBanner extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: isFiltered ? cs.primary : cs.onSurfaceVariant.withOpacity(0.1),
+                  color: isFiltered ? cs.primary : cs.onSurfaceVariant.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(
@@ -1137,7 +1327,7 @@ class _ProteinFilterBanner extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      isFiltered ? 'Protein Filter Active' : 'Protein Preferences',
+                      isFiltered ? 'Protein Exclusions Active' : 'Exclude proteins',
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.bold,
                         color: isFiltered ? cs.onPrimaryContainer : null,
@@ -1147,10 +1337,10 @@ class _ProteinFilterBanner extends StatelessWidget {
                     Text(
                       isFiltered
                           ? prefProteins.join(', ')
-                          : 'Tap to select preferred proteins',
+                          : 'Tap to exclude proteins',
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         color: isFiltered
-                            ? cs.onPrimaryContainer.withOpacity(0.8)
+                          ? cs.onPrimaryContainer.withValues(alpha: 0.8)
                             : cs.onSurfaceVariant,
                       ),
                       maxLines: 2,
@@ -1185,7 +1375,7 @@ class _DietaryFilterBanner extends StatelessWidget {
       decoration: BoxDecoration(
         gradient: isFiltered
             ? LinearGradient(
-                colors: [cs.tertiaryContainer, cs.tertiaryContainer.withOpacity(0.7)],
+                colors: [cs.tertiaryContainer, cs.tertiaryContainer.withValues(alpha: 0.7)],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               )
@@ -1193,13 +1383,13 @@ class _DietaryFilterBanner extends StatelessWidget {
         color: isFiltered ? null : cs.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: isFiltered ? cs.tertiary.withOpacity(0.3) : cs.outlineVariant.withOpacity(0.5),
+          color: isFiltered ? cs.tertiary.withValues(alpha: 0.3) : cs.outlineVariant.withValues(alpha: 0.5),
           width: isFiltered ? 2 : 1,
         ),
         boxShadow: isFiltered
             ? [
                 BoxShadow(
-                  color: cs.tertiary.withOpacity(0.15),
+                  color: cs.tertiary.withValues(alpha: 0.15),
                   blurRadius: 12,
                   offset: const Offset(0, 4),
                 ),
@@ -1216,7 +1406,7 @@ class _DietaryFilterBanner extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: isFiltered ? cs.tertiary : cs.onSurfaceVariant.withOpacity(0.1),
+                  color: isFiltered ? cs.tertiary : cs.onSurfaceVariant.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(
@@ -1244,7 +1434,7 @@ class _DietaryFilterBanner extends StatelessWidget {
                           : 'No dietary restrictions',
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         color: isFiltered
-                            ? cs.onTertiaryContainer.withOpacity(0.8)
+                          ? cs.onTertiaryContainer.withValues(alpha: 0.8)
                             : cs.onSurfaceVariant,
                       ),
                       maxLines: 2,
