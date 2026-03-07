@@ -8,6 +8,7 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 import 'core/services/profile_service.dart';
 import 'core/providers/auth_provider.dart';
 import 'firebase_options.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 Future<void> main() async {
   // Ensure bindings before using platform plugins (SharedPreferences etc.)
@@ -58,6 +59,21 @@ class PrepProApp extends StatelessWidget {
             darkTheme: AppTheme.dark,
             routerConfig: createRouter(authProvider),
             debugShowCheckedModeBanner: false,
+            locale: null, // Uses device locale automatically
+            supportedLocales: const [
+              Locale('en'),
+              Locale('en', 'US'),
+              Locale('es'),
+              Locale('fr'),
+              Locale('de'),
+              Locale('zh'),
+              Locale('hi'),
+            ],
+              localizationsDelegates: [
+                GlobalMaterialLocalizations.delegate,
+                GlobalWidgetsLocalizations.delegate,
+                GlobalCupertinoLocalizations.delegate,
+              ],
           );
         },
       ),

@@ -1,3 +1,4 @@
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -15,6 +16,28 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+    bool _showQuickStart = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadQuickStartDismissed();
+  }
+
+  Future<void> _loadQuickStartDismissed() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _showQuickStart = !(prefs.getBool('quickStartDismissed') ?? false);
+    });
+  }
+
+  Future<void> _dismissQuickStart() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('quickStartDismissed', true);
+    setState(() {
+      _showQuickStart = false;
+    });
+  }
   Future<PackageInfo> _packageInfo() => PackageInfo.fromPlatform();
 
   void _showAbout(BuildContext context) {
@@ -107,8 +130,23 @@ class _HomePageState extends State<HomePage> {
         centerTitle: true,
         title: Image.asset('assets/images/PrepProBlue.png', height: 42, errorBuilder: (_, __, ___) => const Text('PrepPro')),
         actions: [
-          IconButton(onPressed: () => context.go('/profile'), icon: const Icon(Icons.person), tooltip: 'Profile'),
-          IconButton(onPressed: () {}, icon: const Icon(Icons.notifications))
+          IconButton(
+            onPressed: () => context.go('/profile'),
+            icon: const Icon(Icons.person),
+            tooltip: 'Profile',
+          ),
+          IconButton(
+            onPressed: () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Notifications are coming soon.'),
+                  duration: Duration(seconds: 2),
+                ),
+              );
+            },
+            icon: const Icon(Icons.notifications),
+            tooltip: 'Notifications',
+          ),
         ],
       ),
       body: Stack(
@@ -132,100 +170,111 @@ class _HomePageState extends State<HomePage> {
           SingleChildScrollView(
             padding: const EdgeInsets.all(20),
             child: Column(children: [
-          // Welcome guidance banner
-          Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Theme.of(context).colorScheme.primaryContainer, Theme.of(context).colorScheme.secondaryContainer],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
+          // Welcome guidance banner (dismissible)
+          if (_showQuickStart)
+            Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Theme.of(context).colorScheme.primaryContainer, Theme.of(context).colorScheme.secondaryContainer],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.05),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
               ),
-              borderRadius: BorderRadius.circular(16),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.05),
-                  blurRadius: 10,
-                  offset: const Offset(0, 4),
-                ),
-              ],
-            ),
-            padding: const EdgeInsets.all(20),
-            child: Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.9),
-                    borderRadius: BorderRadius.circular(12),
+              padding: const EdgeInsets.all(20),
+              child: Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.surface.withValues(alpha: 0.9),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Icon(
+                      Icons.rocket_launch,
+                      color: Theme.of(context).colorScheme.primary,
+                      size: 28,
+                    ),
                   ),
-                  child: Icon(
-                    Icons.rocket_launch,
-                    color: Theme.of(context).colorScheme.primary,
-                    size: 28,
-                  ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Quick Start Guide',
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: Theme.of(context).colorScheme.onPrimaryContainer,
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Quick Start Guide',
+                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: Theme.of(context).colorScheme.onPrimaryContainer,
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 6),
-                      Text(
-                        'Set profile → Generate plan → Start cooking!',
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: Theme.of(context).colorScheme.onPrimaryContainer.withValues(alpha: 0.8),
+                        const SizedBox(height: 6),
+                        Text(
+                          '1. Set up your profile with your weight, goals, and preferences.\n'
+                          '2. Tap “Generate Meal Plan” to get a personalized plan.\n'
+                          '3. Browse recipes and swap meals as you like.\n'
+                          '4. View your shopping list for the week.\n'
+                          '5. Track your calories and progress each day.\n'
+                          '6. Adjust your plan or profile anytime for better results.',
+                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            color: Theme.of(context).colorScheme.onPrimaryContainer.withValues(alpha: 0.8),
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                  IconButton(
+                    icon: const Icon(Icons.close),
+                    tooltip: 'Dismiss',
+                    onPressed: _dismissQuickStart,
+                  ),
+                ],
+              ),
             ),
-          ),
-          const SizedBox(height: 24),
+          // Main content
           FutureBuilder<Profile?>(
             future: ProfileService.loadProfile(),
-            builder: (c, snap) {
+            builder: (context, snap) {
               final profile = snap.data;
               final plannerOnly = profile?.plannerOnly ?? false;
-              final t = plannerOnly ? null : profile?.computeDailyTarget();
               final subtitle = plannerOnly
-                  ? 'Meal planner mode'
-                  : (t == null ? 'Tap to set your goal' : 'Target: $t kcal');
-              final progress = 0.0; // TODO: hook up actual consumed calories
-              return Column(children: [
-                ProgressCard(
-                  title: plannerOnly ? 'Meal planning' : 'Calories',
-                  subtitle: subtitle,
-                  progress: progress,
-                  onTap: () async {
-                    // navigate to Profile for edits
-                    context.go('/profile');
-                    setState(() {});
-                  },
-                ),
-                const SizedBox(height: 24),
-                FutureBuilder<int>(
-                  future: ProfileService.getWeeklyPlanCount(),
-                  builder: (c, snap) {
-                    final count = snap.data ?? 0;
-                    final progress = count / 7.0;
-                    return ProgressCard(
-                      title: 'Weekly Activity',
-                      subtitle: '$count of 7 days with meal plans',
-                      progress: progress.clamp(0.0, 1.0),
-                      onTap: () => context.go('/plan'),
-                    );
-                  },
-                ),
-              ]);
+                  ? 'Plan meals without calorie tracking'
+                  : 'Track your daily calories and progress';
+              final progress = 0.0; // Optionally compute actual progress if available
+              return Column(
+                children: [
+                  ProgressCard(
+                    title: plannerOnly ? 'Meal planning' : 'Calories',
+                    subtitle: subtitle,
+                    progress: progress,
+                    onTap: () async {
+                      context.go('/profile');
+                      setState(() {});
+                    },
+                  ),
+                  const SizedBox(height: 24),
+                  FutureBuilder<int>(
+                    future: ProfileService.getWeeklyPlanCount(),
+                    builder: (c, snap) {
+                      final count = snap.data ?? 0;
+                      final progress = count / 7.0;
+                      return ProgressCard(
+                        title: 'Weekly Activity',
+                        subtitle: '$count of 7 days with meal plans',
+                        progress: progress.clamp(0.0, 1.0),
+                        onTap: () => context.go('/plan'),
+                      );
+                    },
+                  ),
+                ],
+              );
             },
           ),
           const SizedBox(height: 20),
@@ -266,7 +315,7 @@ class _HomePageState extends State<HomePage> {
               child: FilledButton.tonalIcon(
                 onPressed: () => _openTab(context, 'shopping'),
                 icon: const Icon(Icons.list, size: 20),
-                label: const Text('Shop', style: TextStyle(fontSize: 13), maxLines: 1, overflow: TextOverflow.ellipsis),
+                label: const Text('Shopping list', style: TextStyle(fontSize: 13), maxLines: 1, overflow: TextOverflow.ellipsis),
                 style: FilledButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 8),
                 ),

@@ -20,9 +20,11 @@ dependencies:
   cloud_firestore: ^6.1.2
   provider: ^6.0.0
   package_info_plus: ^8.0.2
-  intl: ^0.19.0
+  intl: ^0.20.2
   share_plus: ^10.0.2
   google_mobile_ads: ^6.0.0
+  flutter_localizations:
+    sdk: flutter
 
 dev_dependencies:
   flutter_test:
@@ -34,6 +36,7 @@ flutter:
   uses-material-design: true
   assets:
     - assets/data/preppro_500_recipes.json
+    - assets/data/preppro_625_recipes.json
     - assets/images/logo_preppro_blue.png
     - assets/images/logo_icon_foreground.png
     - assets/images/PrepProBlue.png

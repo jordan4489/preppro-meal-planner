@@ -22,6 +22,9 @@ class _S extends State<RecipesPage> {
   final Set<String> _tags = {};
   final Set<String> _prefProteins = {};
   final Set<String> _dietary = {};
+  final Set<String> _excludedAllergens = {};
+  final Set<String> _excludedIngredients = {};
+  final TextEditingController ingredientController = TextEditingController();
   bool _favoritesOnly = false;
   int _minK = 0, _maxK = 1200, _lo = 0, _hi = 1200;
   double _pFloor = 0;
@@ -244,12 +247,12 @@ class _S extends State<RecipesPage> {
         final p = _proteinOf(r);
         if (_prefProteins.contains(p)) return false;
         final hay = _recipeHaystack(r);
-        if (_prefProteins.contains('fish') && _fishKeywords.any(hay.contains)) {
-          return false;
-        }
-        if (_prefProteins.contains('seafood') && _seafoodKeywords.any(hay.contains)) {
-          return false;
-        }
+        if (_prefProteins.contains('tuna') && hay.contains('tuna')) return false;
+        if (_prefProteins.contains('salmon') && hay.contains('salmon')) return false;
+        if (_prefProteins.contains('tofu/tempeh') && (hay.contains('tofu') || hay.contains('tempeh'))) return false;
+        if (_prefProteins.contains('fish') && _fishKeywords.any((k) => hay.contains(k))) return false;
+        if (_prefProteins.contains('seafood') && _seafoodKeywords.any((k) => hay.contains(k))) return false;
+        if (_prefProteins.contains('veggie') && (hay.contains('veggie') || hay.contains('plant'))) return false;
         return true;
       }).toList();
     // Apply favorites filter
@@ -311,6 +314,23 @@ class _S extends State<RecipesPage> {
               return true;
           }
         });
+      }).toList();
+    }
+    // Exclude recipes with selected allergens
+    if (_excludedAllergens.isNotEmpty) {
+      s = s.where((r) => _excludedAllergens.intersection(r.allergens).isEmpty).toList();
+    }
+    // Exclude recipes with selected ingredients (case-insensitive)
+    if (_excludedIngredients.isNotEmpty) {
+      final lowerExcluded = _excludedIngredients.map((e) => e.toLowerCase()).toList();
+      s = s.where((r) {
+        final lowerIngredients = (r.ingredients ?? [])
+            .map((e) => e.name.toLowerCase())
+            .toList();
+        // Exclude recipe if any ingredient contains any excluded ingredient as substring
+        return !lowerExcluded.any(
+          (ex) => lowerIngredients.any((ing) => ing.contains(ex)),
+        );
       }).toList();
     }
     if (_query.trim().isNotEmpty) {
@@ -526,79 +546,302 @@ class _S extends State<RecipesPage> {
   @override
   Widget build(BuildContext c) {
     final shown = _apply();
+    final List<String> commonAllergens = [
+      'nuts', 'dairy', 'egg', 'gluten', 'soy', 'fish', 'shellfish', 'sesame', 'mustard', 'celery', 'peanut', 'sulphite', 'lupin', 'mollusc'
+    ];
+    // ...existing code...
     return Scaffold(
-        appBar: AppBar(
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back),
-            onPressed: () => GoRouter.of(c).go('/home'),
+      appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => GoRouter.of(c).go('/home'),
+        ),
+        title: TextField(
+          decoration: InputDecoration(
+            hintText: 'Search recipes...',
+            hintStyle: TextStyle(color: Theme.of(c).colorScheme.onSurfaceVariant),
+            border: InputBorder.none,
+            prefixIcon: const Icon(Icons.search),
           ),
-          title: TextField(
-            decoration: InputDecoration(
-              hintText: 'Search recipes...',
-              hintStyle: TextStyle(color: Theme.of(c).colorScheme.onSurfaceVariant),
-              border: InputBorder.none,
-              prefixIcon: const Icon(Icons.search),
-            ),
-            onChanged: (v) => setState(() => _query = v),
+          onChanged: (v) => setState(() => _query = v),
+        ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.restaurant_menu),
+            tooltip: 'Dietary requirements',
+            onPressed: () => _openDietarySelector(),
           ),
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.restaurant_menu),
-              tooltip: 'Dietary requirements',
-              onPressed: () => _openDietarySelector(),
-            ),
-            Stack(
-              children: [
-                IconButton(
-                  icon: const Icon(Icons.filter_alt),
-                  tooltip: 'Filters',
-                  onPressed: _openFilters,
-                ),
-                if (_dietary.isNotEmpty || _airOnly || _favoritesOnly)
-                  Positioned(
-                    right: 8,
-                    top: 8,
-                    child: Container(
-                      padding: const EdgeInsets.all(4),
-                      decoration: BoxDecoration(
-                        color: Theme.of(c).colorScheme.primary,
-                        shape: BoxShape.circle,
+          Stack(
+            children: [
+              IconButton(
+                icon: const Icon(Icons.filter_alt),
+                tooltip: 'Filters',
+                onPressed: _openFilters,
+              ),
+              if (_dietary.isNotEmpty || _airOnly || _favoritesOnly || _excludedAllergens.isNotEmpty || _excludedIngredients.isNotEmpty || _prefProteins.isNotEmpty || _mealTypes.isNotEmpty)
+                Positioned(
+                  right: 8,
+                  top: 8,
+                  child: Container(
+                    padding: const EdgeInsets.all(4),
+                    decoration: BoxDecoration(
+                      color: Theme.of(c).colorScheme.primary,
+                      shape: BoxShape.circle,
+                    ),
+                    constraints: const BoxConstraints(
+                      minWidth: 16,
+                      minHeight: 16,
+                    ),
+                    child: Text(
+                      '${_dietary.length + (_airOnly ? 1 : 0) + (_favoritesOnly ? 1 : 0) + _excludedAllergens.length + _excludedIngredients.length + _prefProteins.length + _mealTypes.length}',
+                      style: TextStyle(
+                        color: Theme.of(c).colorScheme.onPrimary,
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
                       ),
-                      constraints: const BoxConstraints(
-                        minWidth: 16,
-                        minHeight: 16,
-                      ),
-                      child: Text(
-                        '${_dietary.length + (_airOnly ? 1 : 0) + (_favoritesOnly ? 1 : 0)}',
-                        style: TextStyle(
-                          color: Theme.of(c).colorScheme.onPrimary,
-                          fontSize: 10,
-                          fontWeight: FontWeight.bold,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
+                      textAlign: TextAlign.center,
                     ),
                   ),
-              ],
-            ),
-          ]),
-        body: Stack(
-          children: [
-            Positioned.fill(
-              child: Opacity(
-                opacity: 0.05,
-                child: Transform.scale(
-                  scale: 0.6,
-                  child: Image.asset(
-                    'assets/images/PrepProBlue.png',
-                    fit: BoxFit.cover,
-                    alignment: Alignment.center,
-                    errorBuilder: (_, __, ___) => const SizedBox(),
-                  ),
+                ),
+            ],
+          ),
+        ],
+      ),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Active filters summary row (single-line, horizontally scrollable)
+          if (_dietary.isNotEmpty || _airOnly || _favoritesOnly || _excludedAllergens.isNotEmpty || _excludedIngredients.isNotEmpty || _prefProteins.isNotEmpty || _mealTypes.isNotEmpty)
+            SizedBox(
+              height: 40,
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.fromLTRB(8, 4, 8, 0),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text('Filters:', style: Theme.of(c).textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w600)),
+                    const SizedBox(width: 4),
+                    // Dietary
+                    ..._dietary.map((d) {
+                      final label = d
+                          .split('-')
+                          .map((w) => w.isEmpty ? w : (w[0].toUpperCase() + w.substring(1)))
+                          .join(' ');
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 2),
+                        child: InputChip(
+                          label: Text(label),
+                          onDeleted: () => setState(() => _dietary.remove(d)),
+                        ),
+                      );
+                    }),
+                    // Meal types
+                    ..._mealTypes.map((mt) => Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 2),
+                          child: InputChip(
+                            label: Text(mt[0].toUpperCase() + mt.substring(1)),
+                            onDeleted: () => setState(() => _mealTypes.remove(mt)),
+                          ),
+                        )),
+                    // Proteins
+                    ..._prefProteins.map((p) => Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 2),
+                          child: InputChip(
+                            label: Text(p),
+                            onDeleted: () => setState(() => _prefProteins.remove(p)),
+                          ),
+                        )),
+                    // Allergens
+                    ..._excludedAllergens.map((a) => Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 2),
+                          child: InputChip(
+                            label: Text('No $a'),
+                            onDeleted: () => setState(() => _excludedAllergens.remove(a)),
+                          ),
+                        )),
+                    // Ingredients
+                    ..._excludedIngredients.map((ing) => Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 2),
+                          child: InputChip(
+                            label: Text(ing),
+                            onDeleted: () => setState(() => _excludedIngredients.remove(ing)),
+                          ),
+                        )),
+                    // Air fryer & favourites toggles
+                    if (_airOnly)
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 2),
+                        child: InputChip(
+                          label: const Text('Air fryer only'),
+                          onDeleted: () => setState(() => _airOnly = false),
+                        ),
+                      ),
+                    if (_favoritesOnly)
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 2),
+                        child: InputChip(
+                          label: const Text('Favourites only'),
+                          onDeleted: () => setState(() => _favoritesOnly = false),
+                        ),
+                      ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 2),
+                      child: ActionChip(
+                        label: const Text('Clear all'),
+                        avatar: const Icon(Icons.clear, size: 18),
+                        onPressed: () {
+                          setState(() {
+                            _dietary.clear();
+                            _mealTypes.clear();
+                            _prefProteins.clear();
+                            _excludedAllergens.clear();
+                            _excludedIngredients.clear();
+                            _airOnly = false;
+                            _favoritesOnly = false;
+                          });
+                        },
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
-            loading
+          // Meal type filter row
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            child: Row(
+              children: [
+                const Text('Meal type: ', style: TextStyle(fontWeight: FontWeight.w600)),
+                ...['breakfast', 'snack', 'lunch', 'dinner'].map((mt) => Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 2),
+                  child: FilterChip(
+                    label: Text(mt[0].toUpperCase() + mt.substring(1)),
+                    selected: _mealTypes.contains(mt),
+                    onSelected: (selected) {
+                      setState(() {
+                        if (selected) {
+                          _mealTypes.add(mt);
+                        } else {
+                          _mealTypes.remove(mt);
+                        }
+                      });
+                    },
+                  ),
+                )),
+              ],
+            ),
+          ),
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            child: Row(
+              children: [
+                const Text('Exclude proteins: ', style: TextStyle(fontWeight: FontWeight.w600)),
+                ...['chicken','turkey','beef','lamb','pork','eggs','fish','seafood','tofu/tempeh','veggie'].map((p) => Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 2),
+                  child: FilterChip(
+                    label: Text(p),
+                    selected: _prefProteins.contains(p),
+                    onSelected: (selected) {
+                      setState(() {
+                        if (selected) {
+                          _prefProteins.add(p);
+                        } else {
+                          _prefProteins.remove(p);
+                        }
+                      });
+                    },
+                  ),
+                )),
+              ],
+            ),
+          ),
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            child: Row(
+              children: [
+                const Text('Exclude allergens: ', style: TextStyle(fontWeight: FontWeight.w600)),
+                ...commonAllergens.map((a) => Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 2),
+                  child: FilterChip(
+                    label: Text(a),
+                    selected: _excludedAllergens.contains(a),
+                    onSelected: (selected) {
+                      setState(() {
+                        if (selected) {
+                          _excludedAllergens.add(a);
+                        } else {
+                          _excludedAllergens.remove(a);
+                        }
+                      });
+                    },
+                  ),
+                )),
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+            child: Row(
+              children: [
+                const Text('Exclude ingredient: ', style: TextStyle(fontWeight: FontWeight.w600)),
+                Expanded(
+                  child: TextField(
+                    controller: ingredientController,
+                    decoration: const InputDecoration(
+                      hintText: 'e.g. cottage cheese',
+                      isDense: true,
+                      contentPadding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+                    ),
+                    onSubmitted: (val) {
+                      final v = val.trim().toLowerCase();
+                      if (v.isNotEmpty && !_excludedIngredients.contains(v)) {
+                        setState(() {
+                          _excludedIngredients.add(v);
+                        });
+                      }
+                      ingredientController.clear();
+                    },
+                  ),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.add),
+                  onPressed: () {
+                    final v = ingredientController.text.trim().toLowerCase();
+                    if (v.isNotEmpty && !_excludedIngredients.contains(v)) {
+                      setState(() {
+                        _excludedIngredients.add(v);
+                      });
+                    }
+                    ingredientController.clear();
+                  },
+                ),
+              ],
+            ),
+          ),
+          if (_excludedIngredients.isNotEmpty)
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+              child: Row(
+                children: _excludedIngredients.map((ing) => Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 2),
+                  child: Chip(
+                    label: Text(ing),
+                    onDeleted: () {
+                      setState(() {
+                        _excludedIngredients.remove(ing);
+                      });
+                    },
+                  ),
+                )).toList(),
+              ),
+            ),
+          Expanded(
+            child: loading
                 ? const Center(child: CircularProgressIndicator())
                 : (shown.isEmpty
                     ? Center(
@@ -635,8 +878,10 @@ class _S extends State<RecipesPage> {
                         itemBuilder: (_, i) {
                           final r = shown[i];
                           return RecipeCard(recipe: r, onTap: () => GoRouter.of(c).push('/recipe/${r.id}'));
-                        }))
-          ],
-        ));
+                        })),
+          ),
+        ],
+      ),
+    );
   }
 }

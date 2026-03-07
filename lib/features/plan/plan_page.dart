@@ -6,7 +6,7 @@ import '../../core/models/recipe.dart';
 import '../../core/services/plan_service.dart';
 import '../../core/services/profile_service.dart';
 import '../../core/services/plan_store.dart';
-import '../../core/services/personalization_service.dart';
+// import '../../core/services/personalization_service.dart'; // Unused import removed
 
 
 class PlanPage extends StatefulWidget {
@@ -26,6 +26,11 @@ class _PlanState extends State<PlanPage> {
   int _mealsPerDay = 5;
   final Set<String> prefProteins = {};
   final Set<String> dietaryReqs = {};
+  final Set<String> excludedAllergens = {};
+  final Set<String> excludedIngredients = {};
+  final TextEditingController ingredientController = TextEditingController();
+  double? t;
+  List<String> labels = [];
   final _opts = const [
     'chicken',
     'turkey',
@@ -46,6 +51,9 @@ class _PlanState extends State<PlanPage> {
     'low-carb',
     'halal',
     'kosher'
+  ];
+  final List<String> commonAllergens = [
+    'nuts', 'dairy', 'egg', 'gluten', 'soy', 'fish', 'shellfish', 'sesame', 'mustard', 'celery', 'peanut', 'sulphite', 'lupin', 'mollusc'
   ];
 
   static const _fishKeywords = [
@@ -249,9 +257,13 @@ class _PlanState extends State<PlanPage> {
     if (has(['pork'])) return 'pork';
     if (has(['egg', 'eggs'])) return 'eggs';
     if (has(['tofu', 'tempeh'])) return 'tofu/tempeh';
-    if (has(_fishKeywords)) return 'fish';
-    if (has(_seafoodKeywords))
-      return 'seafood';
+    if (has(_fishKeywords)) {
+      // Check for specific fish types
+      if (has(['tuna'])) return 'tuna';
+      if (has(['salmon'])) return 'salmon';
+      return 'fish';
+    }
+    if (has(_seafoodKeywords)) return 'seafood';
     if (has(['vegan', 'vegetarian', 'veggie', 'plant'])) return 'veggie';
     return 'veggie';
   }
@@ -260,14 +272,19 @@ class _PlanState extends State<PlanPage> {
     if (prefProteins.isEmpty) return src;
     return src.where((r) {
       final p = _proteinOf(r);
+      // Exclude if any selected protein matches
       if (prefProteins.contains(p)) return false;
-      final hay = _recipeHaystack(r);
-      if (prefProteins.contains('fish') && _fishKeywords.any(hay.contains)) {
-        return false;
-      }
-      if (prefProteins.contains('seafood') && _seafoodKeywords.any(hay.contains)) {
-        return false;
-      }
+      // Exclude specific fish types
+      if (prefProteins.contains('tuna') && _recipeHaystack(r).contains('tuna')) return false;
+      if (prefProteins.contains('salmon') && _recipeHaystack(r).contains('salmon')) return false;
+      // Exclude tofu/tempeh
+      if (prefProteins.contains('tofu/tempeh') && (_recipeHaystack(r).contains('tofu') || _recipeHaystack(r).contains('tempeh'))) return false;
+      // Exclude generic fish
+      if (prefProteins.contains('fish') && _fishKeywords.any((k) => _recipeHaystack(r).contains(k))) return false;
+      // Exclude seafood
+      if (prefProteins.contains('seafood') && _seafoodKeywords.any((k) => _recipeHaystack(r).contains(k))) return false;
+      // Exclude veggie
+      if (prefProteins.contains('veggie') && (_recipeHaystack(r).contains('veggie') || _recipeHaystack(r).contains('plant'))) return false;
       return true;
     }).toList();
   }
@@ -283,68 +300,82 @@ class _PlanState extends State<PlanPage> {
         .toLowerCase();
   }
 
-  List<Recipe> _applyPrefWithFallback(List<Recipe> src) {
-    if (prefProteins.isEmpty) return src;
-    return _applyPref(src);
-  }
-
   List<Recipe> _applyDietary(List<Recipe> src) {
-    if (dietaryReqs.isEmpty) return src;
-    return src.where((r) {
-      final titleLower = r.title.toLowerCase();
-      final displayTitleLower = r.displayTitle.toLowerCase();
-      final tagsLower = r.tags.map((e) => e.toLowerCase()).join(' ');
-      final ingredientsLower = (r.ingredients ?? [])
-          .map((e) => e.name.toLowerCase())
-          .join(' ');
-      final combined = '$titleLower $displayTitleLower $tagsLower $ingredientsLower';
-      
-      bool hasAny(List<String> k) => k.any((x) => combined.contains(x));
-      bool hasAllergen(String a) => r.allergens.contains(a);
-      return dietaryReqs.every((diet) {
-        switch (diet) {
-          case 'vegetarian':
-            return !hasAny(_meatKeywords);
-          case 'vegan':
-            return !hasAny(_meatKeywords) &&
-                !hasAny(_dairyKeywords) &&
-                !hasAllergen('dairy') &&
-                !hasAllergen('egg') &&
-                !hasAllergen('fish') &&
-                !hasAllergen('shellfish') &&
-                !combined.contains('egg') &&
-                !combined.contains('honey') &&
-                !combined.contains('gelatin');
-          case 'gluten-free':
-            return !hasAny(_glutenKeywords) && !hasAllergen('gluten');
-          case 'dairy-free':
-            return !hasAny(_dairyKeywords) && !hasAllergen('dairy');
-          case 'low-carb':
-            return r.nutritionKcal > 0 &&
-                ((r.nutritionProtein * 4) / r.nutritionKcal) > 0.3;
-          case 'halal':
-            return !combined.contains('pork') &&
-                !combined.contains('bacon') &&
-                !combined.contains('ham') &&
-                !combined.contains('alcohol') &&
-                !combined.contains('wine') &&
-                !combined.contains('beer') &&
-                !combined.contains('liquor');
-          case 'kosher':
-            return !combined.contains('pork') &&
-                !combined.contains('bacon') &&
-                !combined.contains('ham') &&
-                !combined.contains('shrimp') &&
-                !combined.contains('prawn') &&
-                !combined.contains('crab') &&
-                !combined.contains('lobster') &&
-                !combined.contains('scallop') &&
-                !combined.contains('shellfish');
-          default:
-            return true;
-        }
-      });
-    }).toList();
+    var filtered = src;
+    if (dietaryReqs.isNotEmpty) {
+      filtered = filtered.where((r) {
+        final titleLower = r.title.toLowerCase();
+        final displayTitleLower = r.displayTitle.toLowerCase();
+        final tagsLower = r.tags.map((e) => e.toLowerCase()).join(' ');
+        final ingredientsLower = (r.ingredients ?? [])
+            .map((e) => e.name.toLowerCase())
+            .join(' ');
+        final combined = '$titleLower $displayTitleLower $tagsLower $ingredientsLower';
+        bool hasAny(List<String> k) => k.any((x) => combined.contains(x));
+        bool hasAllergen(String a) => r.allergens.contains(a);
+        return dietaryReqs.every((diet) {
+          switch (diet) {
+            case 'vegetarian':
+              return !hasAny(_meatKeywords);
+            case 'vegan':
+              return !hasAny(_meatKeywords) &&
+                  !hasAny(_dairyKeywords) &&
+                  !hasAllergen('dairy') &&
+                  !hasAllergen('egg') &&
+                  !hasAllergen('fish') &&
+                  !hasAllergen('shellfish') &&
+                  !combined.contains('egg') &&
+                  !combined.contains('honey') &&
+                  !combined.contains('gelatin');
+            case 'gluten-free':
+              return !hasAny(_glutenKeywords) && !hasAllergen('gluten');
+            case 'dairy-free':
+              return !hasAny(_dairyKeywords) && !hasAllergen('dairy');
+            case 'low-carb':
+              return r.nutritionKcal > 0 &&
+                  ((r.nutritionProtein * 4) / r.nutritionKcal) > 0.3;
+            case 'halal':
+              return !combined.contains('pork') &&
+                  !combined.contains('bacon') &&
+                  !combined.contains('ham') &&
+                  !combined.contains('alcohol') &&
+                  !combined.contains('wine') &&
+                  !combined.contains('beer') &&
+                  !combined.contains('liquor');
+            case 'kosher':
+              return !combined.contains('pork') &&
+                  !combined.contains('bacon') &&
+                  !combined.contains('ham') &&
+                  !combined.contains('shrimp') &&
+                  !combined.contains('prawn') &&
+                  !combined.contains('crab') &&
+                  !combined.contains('lobster') &&
+                  !combined.contains('scallop') &&
+                  !combined.contains('shellfish');
+            default:
+              return true;
+          }
+        });
+      }).toList();
+    }
+    // Exclude recipes with selected allergens
+    if (excludedAllergens.isNotEmpty) {
+      filtered = filtered.where((r) => excludedAllergens.intersection(r.allergens).isEmpty).toList();
+    }
+    // Exclude recipes with selected ingredients (substring match, case-insensitive)
+    if (excludedIngredients.isNotEmpty) {
+      // Normalize excluded terms to lowercase once
+      final lowerExcluded = excludedIngredients.map((e) => e.toLowerCase()).toList();
+      filtered = filtered.where((r) {
+        final lowerIngredients = (r.ingredients ?? [])
+            .map((e) => e.name.toLowerCase())
+            .toList();
+        return !lowerExcluded.any(
+          (ex) => lowerIngredients.any((ing) => ing.contains(ex)),
+        );
+      }).toList();
+    }
+    return filtered;
   }
 
   String _mealKey(int di, int mi) => '$di-$mi';
@@ -373,93 +404,61 @@ class _PlanState extends State<PlanPage> {
 
   Future<void> _generate() async {
     HapticFeedback.lightImpact();
-    final saved = await ProfileService.loadPreferredProteins();
-    final savedDietary = await ProfileService.loadDietaryRequirements();
-    setState(() {
-      prefProteins
-        ..clear()
-        ..addAll(saved);
-      dietaryReqs
-        ..clear()
-        ..addAll(savedDietary);
-    });
-    if (targetKcal == null && !_plannerOnly) {
-      _toast('Set your goal on the profile page first.');
-      return;
-    }
-    if (all.isEmpty) {
-      _toast('No recipes available.');
-      return;
-    }
-    setState(() {
-      generating = true;
-      plan = null;
-    });
-    
-    // Apply dietary filter first (affects all recipes including snacks)
-    var filtered = _applyDietary(all);
-    final prefFiltered = _applyPrefWithFallback(filtered);
+    setState(() { generating = true; });
 
-    // Apply protein filter across all meals (fallback to dietary if no matches)
-    final allSnacks = prefFiltered
-      .where((r) => r.mealTypes.any((m) => m.toLowerCase() == 'snack'))
-      .toList();
-    final mainMeals = prefFiltered
-      .where((r) => !r.mealTypes.any((m) => m.toLowerCase() == 'snack'))
-      .toList();
-    final source = [...mainMeals, ...allSnacks];
-    
-    if (source.isEmpty) {
-      _toast('No recipes match your protein selection.');
-      setState(() {
-        generating = false;
-      });
-      return;
-    }
-    try {
-      final prefs = await PersonalizationService.getRecipeScores();
-      final hasSnacks = source.any(
-          (r) => r.mealTypes.any((m) => m.toLowerCase() == 'snack'));
-      final mealsPerDay = hasSnacks ? 5 : 3;
-      final split = hasSnacks
-          ? const [0.22, 0.10, 0.28, 0.10, 0.30]
-          : const [0.30, 0.35, 0.35];
-      final week = PlanService.generate(
-          recipes: source,
-          dailyTarget: targetKcal ?? _effectiveTarget(),
-          days: 7,
-          mealsPerDay: mealsPerDay,
-          split: split,
-          maxRepeatsPerWeek: 1,
-          preferenceScores: prefs,
-          maxBurgersPerWeek: 3);
-      _eaten.clear();
-      final ids = week.days
-          .map((d) => d.meals.map((m) => {'id': m.recipe.id, 'servings': m.servings}).toList())
-          .toList();
-      
-      try {
-        await PlanStore.save(ids);
-        await PlanStore.saveMealChecks(_eaten);
-        await ProfileService.recordPlanGeneration();
-      } catch (saveError) {
-        print('Error saving plan: $saveError');
+    // Generate new plan using current in-memory filters
+    // (prefProteins, dietaryReqs, excludedAllergens, excludedIngredients)
+    final filteredRecipes = _applyPref(_applyDietary(all));
+    final days = <DayPlan>[];
+    final mealsPerDay = _mealsPerDay;
+    final mealLabels = mealsPerDay == 3
+        ? ['breakfast', 'lunch', 'dinner']
+        : ['breakfast', 'snack', 'lunch', 'snack', 'dinner'];
+    for (int day = 0; day < 7; day++) {
+      final meals = <PlannedMeal>[];
+      for (int meal = 0; meal < mealsPerDay; meal++) {
+        final label = mealLabels[meal];
+        // Primary pool: recipes for this meal type
+        var pool = filteredRecipes
+            .where((r) => r.mealTypes.any((m) => m.toLowerCase() == label))
+            .toList();
+
+        // If none for this label, fall back to any filtered recipe
+        // (still respects all filters, just relaxes meal type)
+        if (pool.isEmpty) {
+          pool = filteredRecipes;
+          if (pool.isEmpty) {
+            // No valid recipes at all under current filters
+            break;
+          }
+        }
+
+        final recipe = pool[(day * mealsPerDay + meal) % pool.length];
+        meals.add(PlannedMeal(recipe: recipe, servings: 1.0));
       }
-      
-      setState(() {
-        plan = week.days;
-        generating = false;
-        _mealsPerDay = mealsPerDay;
-        _split = split;
-      });
-      _toast('Plan generated & saved.');
-    } on StateError catch (e) {
-      setState(() => generating = false);
-      _toast(e.message);
-    } catch (e) {
-      setState(() => generating = false);
-      _toast('Error: $e');
+      // Only keep days that have the full number of meals
+      if (meals.length == mealsPerDay) {
+        days.add(DayPlan(meals));
+      }
     }
+    setState(() {
+      plan = days;
+      generating = false;
+    });
+
+    // Persist the generated plan for later use
+    final encodedDays = <List<Map<String, Object>>>[];
+    for (final d in days) {
+      final dayList = <Map<String, Object>>[];
+      for (final m in d.meals) {
+        dayList.add(<String, Object>{
+          'id': m.recipe.id,
+          'servings': m.servings,
+        });
+      }
+      encodedDays.add(dayList);
+    }
+    await PlanStore.save(encodedDays);
   }
 
   void _openProteinSelector() {
@@ -510,9 +509,9 @@ class _PlanState extends State<PlanPage> {
                                       prefProteins);
                                   if (mounted) {
                                     Navigator.pop(context);
-                                      _toast(prefProteins.isEmpty
-                                        ? 'No proteins excluded. Generate a new plan.'
-                                        : 'Excluded: ' + prefProteins.join(', ') + '. Generate a new plan.');
+                                    _toast(prefProteins.isEmpty
+                                      ? 'No proteins excluded. Generate a new plan.'
+                                      : 'Excluded: ' + prefProteins.join(', ') + '. Generate a new plan.');
                                   }
                                 },
                                 icon: const Icon(Icons.check),
@@ -651,12 +650,8 @@ class _PlanState extends State<PlanPage> {
     _toast('Servings updated to $v');
   }
   List<Recipe> _poolForSlot(int idx) {
-    // Apply dietary filter first, then protein filter for non-snacks
-    var dietaryFiltered = _applyDietary(all);
-    
-    // For snacks, don't apply protein filter if it would result in no options
-    final isSnack = _mealsPerDay == 5 && (idx == 1 || idx == 3);
-    final base = _applyPrefWithFallback(dietaryFiltered);
+    // Apply all filters (dietary, allergens, ingredients, proteins)
+    final base = _applyPref(_applyDietary(all));
     
     String t;
     if (_mealsPerDay == 3) {
@@ -696,21 +691,12 @@ class _PlanState extends State<PlanPage> {
     }
     if (t.isEmpty) return const <Recipe>[];
     final filtered = base
-        .where((r) => r.mealTypes.any((m) => m.toLowerCase() == t))
-        .toList();
-    
-    // If filtering resulted in no snacks, fall back to all dietary-filtered snacks
-    if (isSnack && filtered.isEmpty) {
-      final dietaryFallback = _applyDietary(all);
-      final fallbackSnacks = dietaryFallback
-          .where((r) => r.mealTypes.any((m) => m.toLowerCase() == t))
-          .toList();
-      if (fallbackSnacks.isNotEmpty) return fallbackSnacks;
-      // Final fallback: allow any pref-filtered meals to fill snack slots
-      return base;
-    }
-    
-    return filtered;
+      .where((r) => r.mealTypes.any((m) => m.toLowerCase() == t))
+      .toList();
+
+    // If there are no candidates for this slot under current filters,
+    // return the full filtered base so caller can decide how to handle it.
+    return filtered.isEmpty ? base : filtered;
   }
 
   Future<void> _magicReplace(int di, int mi) async {
@@ -845,9 +831,30 @@ class _PlanState extends State<PlanPage> {
               children: [
               // Only show filters when no plan is generated
               if (plan == null) ...[
-                _ProteinFilterBanner(
-                  prefProteins: prefProteins,
-                  onTap: _openProteinSelector,
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  child: Row(
+                    children: [
+                      const Text('Exclude proteins: ', style: TextStyle(fontWeight: FontWeight.w600)),
+                      ..._opts.map((p) => Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 2),
+                        child: FilterChip(
+                          label: Text(p),
+                          selected: prefProteins.contains(p),
+                          onSelected: (selected) {
+                            setState(() {
+                              if (selected) {
+                                prefProteins.add(p);
+                              } else {
+                                prefProteins.remove(p);
+                              }
+                            });
+                          },
+                        ),
+                      )),
+                    ],
+                  ),
                 ),
                 if (dietaryReqs.isNotEmpty) ...[
                   const SizedBox(height: 6),
@@ -857,8 +864,149 @@ class _PlanState extends State<PlanPage> {
                   ),
                 ],
                 const SizedBox(height: 8),
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  child: Row(
+                    children: [
+                      const Text('Exclude allergens: ', style: TextStyle(fontWeight: FontWeight.w600)),
+                      ...commonAllergens.map((a) => Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 2),
+                        child: FilterChip(
+                          label: Text(a),
+                          selected: excludedAllergens.contains(a),
+                          onSelected: (selected) {
+                            setState(() {
+                              if (selected) {
+                                excludedAllergens.add(a);
+                              } else {
+                                excludedAllergens.remove(a);
+                              }
+                            });
+                          },
+                        ),
+                      )),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                  child: Row(
+                    children: [
+                      const Text('Exclude ingredient: ', style: TextStyle(fontWeight: FontWeight.w600)),
+                      Expanded(
+                        child: TextField(
+                          controller: ingredientController,
+                          decoration: const InputDecoration(
+                            hintText: 'e.g. cottage cheese',
+                            isDense: true,
+                            contentPadding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+                          ),
+                          onSubmitted: (val) {
+                            final v = val.trim().toLowerCase();
+                            if (v.isNotEmpty && !excludedIngredients.contains(v)) {
+                              setState(() {
+                                excludedIngredients.add(v);
+                              });
+                            }
+                            ingredientController.clear();
+                          },
+                        ),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.add),
+                        onPressed: () {
+                          final v = ingredientController.text.trim().toLowerCase();
+                          if (v.isNotEmpty && !excludedIngredients.contains(v)) {
+                            setState(() {
+                              excludedIngredients.add(v);
+                            });
+                          }
+                          ingredientController.clear();
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+                if (excludedIngredients.isNotEmpty)
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                    child: Row(
+                      children: excludedIngredients.map((ing) => Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 2),
+                        child: Chip(
+                          label: Text(ing),
+                          onDeleted: () {
+                            setState(() {
+                              excludedIngredients.remove(ing);
+                            });
+                          },
+                        ),
+                      )).toList(),
+                    ),
+                  ),
               ],
-              _Target(targetKcal: t, onEdit: _editTarget, plannerOnly: _plannerOnly),
+
+              // Compact active filters summary (always visible if any filters are set)
+              if (prefProteins.isNotEmpty ||
+                  dietaryReqs.isNotEmpty ||
+                  excludedAllergens.isNotEmpty ||
+                  excludedIngredients.isNotEmpty)
+                SizedBox(
+                  height: 40,
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    padding: const EdgeInsets.fromLTRB(8, 4, 8, 0),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text(
+                          'Filters:',
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodySmall
+                              ?.copyWith(fontWeight: FontWeight.w600),
+                        ),
+                        const SizedBox(width: 4),
+                        // Dietary
+                        ...dietaryReqs.map((d) {
+                          final label = d
+                              .split('-')
+                              .map((w) =>
+                                  w.isEmpty ? w : (w[0].toUpperCase() + w.substring(1)))
+                              .join(' ');
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 2),
+                            child: Chip(label: Text(label)),
+                          );
+                        }),
+                        // Proteins
+                        ...prefProteins.map(
+                          (p) => Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 2),
+                            child: Chip(label: Text('No $p')),
+                          ),
+                        ),
+                        // Allergens
+                        ...excludedAllergens.map(
+                          (a) => Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 2),
+                            child: Chip(label: Text('No $a')),
+                          ),
+                        ),
+                        // Ingredients
+                        ...excludedIngredients.map(
+                          (ing) => Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 2),
+                            child: Chip(label: Text(ing)),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              _Target(targetKcal: t != null ? t.toInt() : null, onEdit: _editTarget, plannerOnly: _plannerOnly),
               if (plan != null && t != null && !_plannerOnly) ...[
                 const SizedBox(height: 6),
                 Card(
@@ -896,6 +1044,53 @@ class _PlanState extends State<PlanPage> {
                 ),
               ],
               const SizedBox(height: 10),
+              // Quick plan presets row (only when no plan yet, to save space once a plan exists)
+              if (plan == null)
+                SizedBox(
+                  height: 40,
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    padding: const EdgeInsets.symmetric(horizontal: 4),
+                    child: Row(
+                      children: [
+                        Text(
+                          'Quick presets:',
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodySmall
+                              ?.copyWith(fontWeight: FontWeight.w600),
+                        ),
+                        const SizedBox(width: 4),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 2),
+                          child: ActionChip(
+                            label: const Text('Meat-free week'),
+                            onPressed: () {
+                              setState(() {
+                                // Ensure vegetarian is applied; keep any real allergen/ingredient exclusions
+                                dietaryReqs.add('vegetarian');
+                              });
+                              _generate();
+                            },
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 2),
+                          child: ActionChip(
+                            label: const Text('Higher protein'),
+                            onPressed: () {
+                              setState(() {
+                                // Use existing low-carb rule as a proxy for higher protein days
+                                dietaryReqs.add('low-carb');
+                              });
+                              _generate();
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
               FilledButton.icon(
                 onPressed: generating ? null : _generate,
                 icon: Icon(generating ? Icons.hourglass_empty : Icons.auto_awesome, size: 20),
@@ -914,7 +1109,21 @@ class _PlanState extends State<PlanPage> {
               ),
               const SizedBox(height: 12),
               if (plan == null)
-                const _EmptyHint()
+                _EmptyHint(
+                  hasPlanButEmpty: false,
+                  prefProteins: prefProteins,
+                  dietaryReqs: dietaryReqs,
+                  excludedAllergens: excludedAllergens,
+                  excludedIngredients: excludedIngredients,
+                )
+              else if (plan!.isEmpty)
+                _EmptyHint(
+                  hasPlanButEmpty: true,
+                  prefProteins: prefProteins,
+                  dietaryReqs: dietaryReqs,
+                  excludedAllergens: excludedAllergens,
+                  excludedIngredients: excludedIngredients,
+                )
               else
                 ...plan!.asMap().entries.map((entry) {
                   final di = entry.key;
@@ -1228,29 +1437,58 @@ class _Target extends StatelessWidget {
 }
 
 class _EmptyHint extends StatelessWidget {
-  const _EmptyHint();
+  final bool hasPlanButEmpty;
+  final Set<String> prefProteins;
+  final Set<String> dietaryReqs;
+  final Set<String> excludedAllergens;
+  final Set<String> excludedIngredients;
+
+  const _EmptyHint({
+    required this.hasPlanButEmpty,
+    required this.prefProteins,
+    required this.dietaryReqs,
+    required this.excludedAllergens,
+    required this.excludedIngredients,
+  });
+
   @override
-  Widget build(BuildContext context) => Center(
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    final hasFilters = prefProteins.isNotEmpty ||
+        dietaryReqs.isNotEmpty ||
+        excludedAllergens.isNotEmpty ||
+        excludedIngredients.isNotEmpty;
+
+    String _formatDiet(String d) => d
+        .split('-')
+        .map((w) => w.isEmpty ? w : (w[0].toUpperCase() + w.substring(1)))
+        .join(' ');
+
+    return Center(
       child: Padding(
         padding: const EdgeInsets.all(24),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Icon(
               Icons.restaurant_menu,
               size: 80,
-              color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
+              color: cs.primary.withValues(alpha: 0.3),
             ),
             const SizedBox(height: 24),
             Text(
-              'No Meal Plan Yet',
+              hasPlanButEmpty ? 'No Meals Found For Filters' : 'No Meal Plan Yet',
+              textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+                    fontWeight: FontWeight.bold,
+                  ),
             ),
             const SizedBox(height: 12),
             Text(
-              'Generate your personalized 7-day meal plan by tapping the button above.',
+              hasPlanButEmpty
+                  ? 'We couldn\'t build a full weekly plan with your current filters. Try relaxing one or two, then generate again.'
+                  : 'Generate your personalized 7-day meal plan by tapping the button above. We\'ll use your filters automatically.',
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.bodyLarge,
             ),
@@ -1259,102 +1497,40 @@ class _EmptyHint extends StatelessWidget {
               'Tip: Tap any meal to view recipe details. Long-press to replace with a similar recipe.',
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
-              ),
+                    color: cs.onSurfaceVariant,
+                  ),
             ),
-          ],
-        ),
-      ));
-}
-
-class _ProteinFilterBanner extends StatelessWidget {
-  final Set<String> prefProteins;
-  final VoidCallback onTap;
-  const _ProteinFilterBanner({required this.prefProteins, required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
-    final isFiltered = prefProteins.isNotEmpty;
-    
-    return Container(
-      decoration: BoxDecoration(
-        gradient: isFiltered
-            ? LinearGradient(
-                colors: [cs.primaryContainer, cs.primaryContainer.withValues(alpha: 0.7)],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              )
-            : null,
-        color: isFiltered ? null : cs.surfaceContainerHighest,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: isFiltered ? cs.primary.withValues(alpha: 0.3) : cs.outlineVariant.withValues(alpha: 0.5),
-          width: isFiltered ? 2 : 1,
-        ),
-        boxShadow: isFiltered
-            ? [
-                BoxShadow(
-                  color: cs.primary.withValues(alpha: 0.15),
-                  blurRadius: 12,
-                  offset: const Offset(0, 4),
-                ),
-              ]
-            : null,
-      ),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(16),
-        child: Padding(
-          padding: const EdgeInsets.all(18),
-          child: Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: isFiltered ? cs.primary : cs.onSurfaceVariant.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Icon(
-                  Icons.restaurant,
-                  color: isFiltered ? cs.onPrimary : cs.onSurfaceVariant,
-                  size: 24,
-                ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      isFiltered ? 'Protein Exclusions Active' : 'Exclude proteins',
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: isFiltered ? cs.onPrimaryContainer : null,
-                      ),
+            if (hasFilters) ...[
+              const SizedBox(height: 16),
+              Text(
+                'Current filters',
+                style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: cs.onSurfaceVariant,
                     ),
-                    const SizedBox(height: 4),
-                    Text(
-                      isFiltered
-                          ? prefProteins.join(', ')
-                          : 'Tap to exclude proteins',
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: isFiltered
-                          ? cs.onPrimaryContainer.withValues(alpha: 0.8)
-                            : cs.onSurfaceVariant,
-                      ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
-                ),
               ),
-              Icon(
-                isFiltered ? Icons.edit : Icons.chevron_right,
-                color: isFiltered ? cs.onPrimaryContainer : cs.onSurfaceVariant,
+              const SizedBox(height: 8),
+              Wrap(
+                alignment: WrapAlignment.center,
+                spacing: 6,
+                runSpacing: 4,
+                children: [
+                  ...dietaryReqs.map((d) => Chip(label: Text(_formatDiet(d)))),
+                  ...prefProteins.map((p) => Chip(label: Text('No $p'))),
+                  ...excludedAllergens.map((a) => Chip(label: Text('No $a'))),
+                  ...excludedIngredients.map((ing) => Chip(label: Text(ing))),
+                ],
+              ),
+              const SizedBox(height: 4),
+              Text(
+                'If your plan looks too sparse, try removing one or two filters above and generate again.',
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: cs.onSurfaceVariant,
+                    ),
               ),
             ],
-          ),
+          ],
         ),
       ),
     );
