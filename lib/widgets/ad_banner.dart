@@ -26,6 +26,9 @@ class _AdBannerState extends State<AdBanner> {
     if (defaultTargetPlatform == TargetPlatform.android) {
       return 'ca-app-pub-8700408294196968/3599699469';
     }
+    if (defaultTargetPlatform == TargetPlatform.iOS) {
+      return 'ca-app-pub-8700408294196968/3371368672';
+    }
     return '';
   }
 
