@@ -18,9 +18,11 @@ Future<void> main() async {
   await MobileAds.instance.initialize();
 
   // Initialize Firebase
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  if (Firebase.apps.isEmpty) {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+  }
 
   const sentryDsn = String.fromEnvironment('SENTRY_DSN', defaultValue: '');
 
