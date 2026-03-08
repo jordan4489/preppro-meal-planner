@@ -3,4 +3,5 @@ flutter_launcher_icons:
   android: "launcher_prep"
   ios: true
   image_path: "assets/images/PrepProBlue.png"
+  image_path_ios: "assets/images/PrepProWhite.png"
   remove_alpha_ios: true
