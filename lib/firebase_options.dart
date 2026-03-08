@@ -26,7 +26,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions web = FirebaseOptions(
     apiKey: 'AIzaSyBiOg3Maef2QU_0aAjXGJkpmGHGNc76AH8',
-    appId: '1:235971954780:web:abcdefghijklmnop',
+    appId: '1:235971954780:web:7198ca430444dd6b90fe99',
     messagingSenderId: '235971954780',
     projectId: 'preppro-2f5bc',
     authDomain: 'preppro-2f5bc.firebaseapp.com',
@@ -42,8 +42,9 @@ class DefaultFirebaseOptions {
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyBiOg3Maef2QU_0aAjXGJkpmGHGNc76AH8',
-    appId: '1:235971954780:ios:abcdefghijklmnop',
+    // Values must match ios/Runner/GoogleService-Info.plist
+    apiKey: 'AIzaSyCR7LGTiyJXIPZAM7m3P_aUyh7lShrgkt0',
+    appId: '1:235971954780:ios:afe5ccbe1a324d3d90fe99',
     messagingSenderId: '235971954780',
     projectId: 'preppro-2f5bc',
     storageBucket: 'preppro-2f5bc.firebasestorage.app',
@@ -51,8 +52,8 @@ class DefaultFirebaseOptions {
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyBiOg3Maef2QU_0aAjXGJkpmGHGNc76AH8',
-    appId: '1:235971954780:macos:abcdefghijklmnop',
+    apiKey: 'AIzaSyCR7LGTiyJXIPZAM7m3P_aUyh7lShrgkt0',
+    appId: '1:235971954780:macos:afe5ccbe1a324d3d90fe99',
     messagingSenderId: '235971954780',
     projectId: 'preppro-2f5bc',
     storageBucket: 'preppro-2f5bc.firebasestorage.app',
