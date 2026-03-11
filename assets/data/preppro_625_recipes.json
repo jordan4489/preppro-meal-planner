@@ -4220,12 +4220,12 @@
         "unit": "g"
       },
       {
-        "name": "sesame oil",
+        "name": "olive oil",
         "quantity": 5,
         "unit": "ml"
       },
       {
-        "name": "cumin",
+        "name": "paprika",
         "quantity": 1,
         "unit": "tsp"
       },
@@ -4238,14 +4238,34 @@
         "name": "garlic",
         "quantity": 1,
         "unit": "tsp"
+      },
+      {
+        "name": "onion powder",
+        "quantity": 1,
+        "unit": "tsp"
+      },
+      {
+        "name": "dried oregano",
+        "quantity": 0.5,
+        "unit": "tsp"
+      },
+      {
+        "name": "dried thyme",
+        "quantity": 0.5,
+        "unit": "tsp"
+      },
+      {
+        "name": "chilli flakes",
+        "quantity": 1,
+        "unit": "tsp"
       }
     ],
     "instructions": [
       "First, cook the noodles (rice) according to packet instructions and set aside.",
       "Then heat a non-stick pan with a little oil and cook the tuna (canned) until browned and cooked through.",
-      "Next, add the spinach to the same pan and saute until tender.",
-      "Season with lemon zest, garlic, and chopped herbs, then toss to coat.",
-      "Finish with lemon juice and fresh parsley."
+      "Next, add the spinach and mushroom to the same pan and saute until tender.",
+      "Sprinkle over the paprika, garlic, onion powder, dried oregano, dried thyme, chilli flakes, and a pinch of salt, then add a splash of water and a little lemon zest so the tuna and vegetables are coated in a glossy Cajun-style seasoning.",
+      "Finish with extra lemon juice to taste."
     ],
     "prepTime": 10,
     "cookTime": 18,
@@ -4370,11 +4390,6 @@
         "unit": "ml"
       },
       {
-        "name": "soy sauce",
-        "quantity": 10,
-        "unit": "ml"
-      },
-      {
         "name": "lime",
         "quantity": 1,
         "unit": "pc"
@@ -4383,14 +4398,44 @@
         "name": "lemon",
         "quantity": 1,
         "unit": "pc"
+      },
+      {
+        "name": "paprika",
+        "quantity": 1,
+        "unit": "tsp"
+      },
+      {
+        "name": "garlic",
+        "quantity": 1,
+        "unit": "tsp"
+      },
+      {
+        "name": "onion powder",
+        "quantity": 1,
+        "unit": "tsp"
+      },
+      {
+        "name": "dried oregano",
+        "quantity": 0.5,
+        "unit": "tsp"
+      },
+      {
+        "name": "dried thyme",
+        "quantity": 0.5,
+        "unit": "tsp"
+      },
+      {
+        "name": "chilli flakes",
+        "quantity": 1,
+        "unit": "tsp"
       }
     ],
     "instructions": [
-      "First, cook the rice according to packet instructions and set aside.",
+      "First, cook the potatoes until tender (boiled or roasted) and set aside.",
       "Then heat a non-stick pan with a little oil and cook the cod fillet until browned and cooked through.",
-      "Next, add the onion to the same pan and saute until tender.",
-      "Glaze with soy sauce, sesame oil, and grated ginger for a bold umami hit.",
-      "Finish with sesame seeds and sliced spring onion."
+      "Next, add the onion and green beans to the same pan and saute until tender.",
+      "Sprinkle over the paprika, garlic, onion powder, dried oregano, dried thyme, and chilli flakes, then add a squeeze of lemon and lime and a splash of water, tossing until the cod and vegetables are coated in a spicy Cajun sauce.",
+      "Serve everything together as a hearty bowl, finishing with extra citrus to taste."
     ],
     "prepTime": 15,
     "cookTime": 22,
@@ -6438,8 +6483,18 @@
       },
       {
         "name": "yogurt",
-        "quantity": 10,
+        "quantity": 15,
         "unit": "g"
+      },
+      {
+        "name": "garlic",
+        "quantity": 1,
+        "unit": "tsp"
+      },
+      {
+        "name": "dried mixed herbs",
+        "quantity": 1,
+        "unit": "tsp"
       },
       {
         "name": "lime",
@@ -6461,8 +6516,8 @@
       "First, cook the couscous according to packet instructions and set aside.",
       "Then heat a non-stick pan with a little oil and cook the turkey mince until browned and cooked through.",
       "Next, add the spinach to the same pan and saute until tender.",
-      "Season with garlic, cracked black pepper, and a squeeze of citrus, then toss to coat.",
-      "Finish with fresh herbs and a squeeze of lemon or lime."
+      "Stir in the yogurt, garlic, chilli flakes, and dried mixed herbs with a squeeze of lemon or lime and a splash of water, tossing until the turkey and spinach are coated in a light creamy garlic herb sauce.",
+      "Serve over the couscous and finish with cracked black pepper and any extra herbs or citrus."
     ],
     "prepTime": 8,
     "cookTime": 14,
@@ -8818,17 +8873,37 @@
         "unit": "pc"
       },
       {
-        "name": "soy sauce",
-        "quantity": 10,
-        "unit": "ml"
+        "name": "paprika",
+        "quantity": 1,
+        "unit": "tsp"
+      },
+      {
+        "name": "garlic",
+        "quantity": 1,
+        "unit": "tsp"
+      },
+      {
+        "name": "onion powder",
+        "quantity": 1,
+        "unit": "tsp"
+      },
+      {
+        "name": "dried oregano",
+        "quantity": 0.5,
+        "unit": "tsp"
+      },
+      {
+        "name": "dried thyme",
+        "quantity": 0.5,
+        "unit": "tsp"
       }
     ],
     "instructions": [
       "First, cook the couscous according to packet instructions and set aside.",
       "Then heat a non-stick pan with a little oil and cook the tuna (canned) until browned and cooked through.",
       "Next, add the broccoli to the same pan and saute until tender.",
-      "Glaze with soy sauce, sesame oil, and grated ginger for a bold umami hit.",
-      "Finish with sesame seeds and sliced spring onion."
+      "Sprinkle over the paprika, garlic, onion powder, dried oregano, dried thyme, and chilli flakes, then add a splash of water and a squeeze of lemon so the tuna and broccoli are coated in a smoky Cajun-style seasoning.",
+      "Serve over the fluffy couscous, finishing with extra lemon to taste."
     ],
     "prepTime": 18,
     "cookTime": 16,
@@ -9639,11 +9714,6 @@
         "unit": "g"
       },
       {
-        "name": "soy sauce",
-        "quantity": 10,
-        "unit": "ml"
-      },
-      {
         "name": "lemon",
         "quantity": 1,
         "unit": "pc"
@@ -9652,14 +9722,39 @@
         "name": "garlic",
         "quantity": 1,
         "unit": "tsp"
+      },
+      {
+        "name": "paprika",
+        "quantity": 1,
+        "unit": "tsp"
+      },
+      {
+        "name": "onion powder",
+        "quantity": 1,
+        "unit": "tsp"
+      },
+      {
+        "name": "dried oregano",
+        "quantity": 0.5,
+        "unit": "tsp"
+      },
+      {
+        "name": "dried thyme",
+        "quantity": 0.5,
+        "unit": "tsp"
+      },
+      {
+        "name": "chilli flakes",
+        "quantity": 1,
+        "unit": "tsp"
       }
     ],
     "instructions": [
       "First, cook the rice according to packet instructions and set aside.",
       "Then heat a non-stick pan with a little oil and cook the tofu until browned and cooked through.",
       "Next, add the mushroom to the same pan and saute until tender.",
-      "Glaze with soy sauce, sesame oil, and grated ginger for a bold umami hit.",
-      "Finish with sesame seeds and sliced spring onion."
+      "Sprinkle over the paprika, garlic, onion powder, dried oregano, dried thyme, and chilli flakes, then add a splash of water and a squeeze of lemon so the tofu and mushrooms are coated in a blazing Cajun seasoning.",
+      "Serve over the rice and finish with the cheddar cheese melted on top and any extra lemon to taste."
     ],
     "prepTime": 18,
     "cookTime": 22,
@@ -11330,11 +11425,6 @@
         "unit": "ml"
       },
       {
-        "name": "ginger",
-        "quantity": 1,
-        "unit": "tsp"
-      },
-      {
         "name": "lemon",
         "quantity": 1,
         "unit": "pc"
@@ -11343,14 +11433,44 @@
         "name": "lime",
         "quantity": 1,
         "unit": "pc"
+      },
+      {
+        "name": "paprika",
+        "quantity": 1,
+        "unit": "tsp"
+      },
+      {
+        "name": "garlic",
+        "quantity": 1,
+        "unit": "tsp"
+      },
+      {
+        "name": "onion powder",
+        "quantity": 1,
+        "unit": "tsp"
+      },
+      {
+        "name": "dried oregano",
+        "quantity": 0.5,
+        "unit": "tsp"
+      },
+      {
+        "name": "dried thyme",
+        "quantity": 0.5,
+        "unit": "tsp"
+      },
+      {
+        "name": "chilli flakes",
+        "quantity": 0.5,
+        "unit": "tsp"
       }
     ],
     "instructions": [
       "First, cook the brown rice according to packet instructions and set aside.",
       "Then heat a non-stick pan with a little oil and cook the turkey mince until browned and cooked through.",
-      "Next, add the vegetables to the same pan and saute until tender.",
-      "Season with garlic, cracked black pepper, and a squeeze of citrus, then toss to coat.",
-      "Finish with fresh herbs and a squeeze of lemon or lime."
+      "Next, add the sweet potato and tomato to the same pan and saute until tender.",
+      "Drizzle in the olive oil, then sprinkle over the paprika, garlic, onion powder, dried oregano, dried thyme, and chilli flakes, adding a squeeze of lemon and lime and a splash of water so the turkey and vegetables are coated in a zesty Cajun seasoning.",
+      "Serve over the brown rice, finishing with any extra citrus to taste."
     ],
     "prepTime": 8,
     "cookTime": 22,
@@ -14709,23 +14829,38 @@
       },
       {
         "name": "onion",
-        "quantity": 120,
+        "quantity": 50,
         "unit": "g"
       },
       {
-        "name": "peanut butter",
-        "quantity": 20,
-        "unit": "g"
-      },
-      {
-        "name": "ginger",
+        "name": "paprika",
         "quantity": 1,
         "unit": "tsp"
       },
       {
-        "name": "soy sauce",
-        "quantity": 10,
-        "unit": "ml"
+        "name": "garlic",
+        "quantity": 1,
+        "unit": "tsp"
+      },
+      {
+        "name": "onion powder",
+        "quantity": 1,
+        "unit": "tsp"
+      },
+      {
+        "name": "dried oregano",
+        "quantity": 0.5,
+        "unit": "tsp"
+      },
+      {
+        "name": "dried thyme",
+        "quantity": 0.5,
+        "unit": "tsp"
+      },
+      {
+        "name": "chilli flakes",
+        "quantity": 0.5,
+        "unit": "tsp"
       },
       {
         "name": "lime",
@@ -14734,11 +14869,11 @@
       }
     ],
     "instructions": [
-      "Cook the wholewheat pasta according to packet instructions.",
+      "Cook the wholewheat pasta according to packet instructions and set aside.",
       "Heat a pan with a little oil and cook the turkey mince until golden and cooked through.",
-      "Add the onion and onion and saute until tender-crisp.",
-      "Glaze with soy sauce, sesame oil, and grated ginger for a bold umami hit.",
-      "Finish with sesame seeds and sliced spring onion."
+      "Add the onion and saute until tender.",
+      "Sprinkle over the paprika, garlic, onion powder, dried oregano, dried thyme, and chilli flakes, then add a splash of water and toss so the turkey and onions are coated in a glossy Cajun-style seasoning.",
+      "Toss the turkey and onions through the cooked pasta, then finish with a squeeze of lime before serving."
     ],
     "prepTime": 15,
     "cookTime": 22,
@@ -16915,17 +17050,42 @@
         "unit": "pc"
       },
       {
-        "name": "soy sauce",
-        "quantity": 10,
-        "unit": "ml"
+        "name": "paprika",
+        "quantity": 1,
+        "unit": "tsp"
+      },
+      {
+        "name": "garlic",
+        "quantity": 1,
+        "unit": "tsp"
+      },
+      {
+        "name": "onion powder",
+        "quantity": 1,
+        "unit": "tsp"
+      },
+      {
+        "name": "dried oregano",
+        "quantity": 0.5,
+        "unit": "tsp"
+      },
+      {
+        "name": "dried thyme",
+        "quantity": 0.5,
+        "unit": "tsp"
+      },
+      {
+        "name": "chilli flakes",
+        "quantity": 1,
+        "unit": "tsp"
       }
     ],
     "instructions": [
-      "First, cook the rice according to packet instructions and set aside.",
+      "First, cook the potatoes until tender and crisp in the air-fryer or oven and set aside.",
       "Then heat a non-stick pan with a little oil and cook the tuna (canned) until browned and cooked through.",
-      "Next, add the vegetables to the same pan and saute until tender.",
-      "Glaze with soy sauce, sesame oil, and grated ginger for a bold umami hit.",
-      "Finish with sesame seeds and sliced spring onion."
+      "Next, add the green beans and tomato to the same pan and saute until tender.",
+      "Melt the butter in the pan, then stir in the paprika, garlic, onion powder, dried oregano, dried thyme, chilli flakes, lemon zest, and a squeeze of lemon and lime to make a fragrant Cajun butter.",
+      "Toss the tuna and vegetables in the Cajun butter until well coated, then serve over the hot potatoes, finishing with any extra citrus to taste."
     ],
     "prepTime": 15,
     "cookTime": 10,
@@ -17288,14 +17448,39 @@
         "name": "chilli flakes",
         "quantity": 1,
         "unit": "tsp"
+      },
+      {
+        "name": "paprika",
+        "quantity": 1,
+        "unit": "tsp"
+      },
+      {
+        "name": "garlic",
+        "quantity": 1,
+        "unit": "tsp"
+      },
+      {
+        "name": "onion powder",
+        "quantity": 1,
+        "unit": "tsp"
+      },
+      {
+        "name": "dried oregano",
+        "quantity": 0.5,
+        "unit": "tsp"
+      },
+      {
+        "name": "dried thyme",
+        "quantity": 0.5,
+        "unit": "tsp"
       }
     ],
     "instructions": [
       "First, cook the noodles (rice) according to packet instructions and set aside.",
       "Then heat a non-stick pan with a little oil and cook the beef mince until browned and cooked through.",
-      "Next, add the broccoli to the same pan and saute until tender.",
-      "Season with garlic, cracked black pepper, and a squeeze of citrus, then toss to coat.",
-      "Finish with fresh herbs and a squeeze of lemon or lime."
+      "Next, add the broccoli and courgette to the same pan and saute until tender.",
+      "Sprinkle over the paprika, garlic, onion powder, dried oregano, dried thyme, chilli flakes, and a pinch of salt, then add a squeeze of lemon and lime and a splash of water so the beef and vegetables are coated in a loaded Cajun-style sauce.",
+      "Toss through the cooked noodles (rice), then finish with the cheddar cheese melted over the top and any extra citrus to taste."
     ],
     "prepTime": 12,
     "cookTime": 18,
@@ -18876,14 +19061,39 @@
         "unit": "ml"
       },
       {
-        "name": "ginger",
+        "name": "yogurt",
+        "quantity": 20,
+        "unit": "g"
+      },
+      {
+        "name": "paprika",
         "quantity": 1,
         "unit": "tsp"
       },
       {
-        "name": "soy sauce",
-        "quantity": 10,
-        "unit": "ml"
+        "name": "garlic",
+        "quantity": 1,
+        "unit": "tsp"
+      },
+      {
+        "name": "onion powder",
+        "quantity": 1,
+        "unit": "tsp"
+      },
+      {
+        "name": "dried oregano",
+        "quantity": 0.5,
+        "unit": "tsp"
+      },
+      {
+        "name": "dried thyme",
+        "quantity": 0.5,
+        "unit": "tsp"
+      },
+      {
+        "name": "chilli flakes",
+        "quantity": 0.5,
+        "unit": "tsp"
       },
       {
         "name": "lime",
@@ -18894,9 +19104,10 @@
     "instructions": [
       "First, cook the brown rice according to packet instructions and set aside.",
       "Then heat a non-stick pan with a little oil and cook the cod fillet until browned and cooked through.",
-      "Next, add the spinach to the same pan and saute until tender.",
-      "Glaze with soy sauce, sesame oil, and grated ginger for a bold umami hit.",
-      "Finish with sesame seeds and sliced spring onion."
+      "Next, add the tomato and spinach to the same pan and saute until tender.",
+      "In a small bowl, whisk together the yogurt, paprika, garlic, onion powder, dried oregano, dried thyme, chilli flakes, a squeeze of lime juice, and a splash of water to make a creamy Cajun sauce.",
+      "Pour the creamy Cajun sauce into the pan and toss the cod, tomato, and spinach until coated and just warmed through.",
+      "Serve the creamy Cajun cod and vegetables over the brown rice, spooning over any extra sauce."
     ],
     "prepTime": 18,
     "cookTime": 16,
@@ -22507,7 +22718,12 @@
         "unit": "g"
       },
       {
-        "name": "ginger",
+        "name": "garlic",
+        "quantity": 1,
+        "unit": "tsp"
+      },
+      {
+        "name": "dried mixed herbs",
         "quantity": 1,
         "unit": "tsp"
       },
@@ -22525,9 +22741,9 @@
     "instructions": [
       "First, cook the wholewheat pasta according to packet instructions and set aside.",
       "Then heat a non-stick pan with a little oil and cook the tempeh until browned and cooked through.",
-      "Next, add the spinach to the same pan and saute until tender.",
-      "Glaze with soy sauce, sesame oil, and grated ginger for a bold umami hit.",
-      "Finish with sesame seeds and sliced spring onion."
+      "Next, add the spinach and bell pepper to the same pan and saute until tender.",
+      "In a small bowl, whisk together the peanut butter, soy sauce, garlic, dried mixed herbs, a squeeze of lemon juice, and a splash of water to create a creamy garlic herb sauce.",
+      "Pour the creamy garlic herb sauce into the pan and toss the tempeh and vegetables until coated and the sauce thickens slightly, then stir through the cooked wholewheat pasta and serve."
     ],
     "prepTime": 15,
     "cookTime": 10,
@@ -26838,6 +27054,26 @@
         "unit": "tsp"
       },
       {
+        "name": "garlic",
+        "quantity": 1,
+        "unit": "tsp"
+      },
+      {
+        "name": "onion powder",
+        "quantity": 1,
+        "unit": "tsp"
+      },
+      {
+        "name": "dried oregano",
+        "quantity": 0.5,
+        "unit": "tsp"
+      },
+      {
+        "name": "dried thyme",
+        "quantity": 0.5,
+        "unit": "tsp"
+      },
+      {
         "name": "chilli flakes",
         "quantity": 1,
         "unit": "tsp"
@@ -26852,8 +27088,8 @@
       "First, cook the brown rice according to packet instructions and set aside.",
       "Then heat a non-stick pan with a little oil and cook the beef mince until browned and cooked through.",
       "Next, add the onion to the same pan and saute until tender.",
-      "Season with garlic, cracked black pepper, and a squeeze of citrus, then toss to coat.",
-      "Finish with fresh herbs and a squeeze of lemon or lime."
+      "In a small bowl, stir together the yogurt, paprika, garlic, onion powder, dried oregano, dried thyme, chilli flakes, lime juice, and a splash of water to make a creamy Cajun sauce.",
+      "Pour the Cajun sauce into the pan and toss the beef and onions until coated in a creamy Cajun coating, then serve over the brown rice with extra lime to taste."
     ],
     "prepTime": 8,
     "cookTime": 10,
@@ -27132,22 +27368,42 @@
         "unit": "g"
       },
       {
-        "name": "sesame oil",
-        "quantity": 5,
-        "unit": "ml"
-      },
-      {
         "name": "lime",
         "quantity": 1,
         "unit": "pc"
       },
       {
-        "name": "soy sauce",
-        "quantity": 10,
+        "name": "olive oil",
+        "quantity": 5,
         "unit": "ml"
       },
       {
-        "name": "cumin",
+        "name": "paprika",
+        "quantity": 1,
+        "unit": "tsp"
+      },
+      {
+        "name": "garlic",
+        "quantity": 1,
+        "unit": "tsp"
+      },
+      {
+        "name": "onion powder",
+        "quantity": 1,
+        "unit": "tsp"
+      },
+      {
+        "name": "dried oregano",
+        "quantity": 0.5,
+        "unit": "tsp"
+      },
+      {
+        "name": "dried thyme",
+        "quantity": 0.5,
+        "unit": "tsp"
+      },
+      {
+        "name": "chilli flakes",
         "quantity": 1,
         "unit": "tsp"
       }
@@ -27155,9 +27411,9 @@
     "instructions": [
       "First, cook the wholewheat pasta according to packet instructions and set aside.",
       "Then heat a non-stick pan with a little oil and cook the prawns until browned and cooked through.",
-      "Next, add the vegetables to the same pan and saute until tender.",
-      "Glaze with soy sauce, sesame oil, and grated ginger for a bold umami hit.",
-      "Finish with sesame seeds and sliced spring onion."
+      "Next, add the tomato and green beans to the same pan and saute until tender.",
+      "Drizzle in the olive oil, then sprinkle over the paprika, garlic, onion powder, dried oregano, dried thyme, chilli flakes, and a squeeze of lime, adding a splash of water so the prawns and vegetables are coated in a zesty Cajun sauce.",
+      "Toss through the cooked pasta and serve, finishing with any extra lime to taste."
     ],
     "prepTime": 15,
     "cookTime": 14,
@@ -30070,22 +30326,32 @@
         "unit": "g"
       },
       {
-        "name": "chipotle paste",
-        "quantity": 5,
-        "unit": "g"
-      },
-      {
         "name": "paprika",
         "quantity": 1,
         "unit": "tsp"
       },
       {
         "name": "garlic",
+        "quantity": 1,
+        "unit": "tsp"
+      },
+      {
+        "name": "onion powder",
+        "quantity": 1,
+        "unit": "tsp"
+      },
+      {
+        "name": "dried oregano",
         "quantity": 0.5,
         "unit": "tsp"
       },
       {
-        "name": "cumin",
+        "name": "dried thyme",
+        "quantity": 0.5,
+        "unit": "tsp"
+      },
+      {
+        "name": "chilli flakes",
         "quantity": 0.5,
         "unit": "tsp"
       },
@@ -30097,12 +30363,11 @@
     ],
     "instructions": [
       "1) First, preheat your oven to 180Â°C.",
-      "2) Then place the tortilla crisps, spices and seasonings in a zip-lock food bag and crush with a rolling pin until fine crumbs form.",
-      "3) Next, set up a coating station with three shallow bowls â€” one with cornflour, one with beaten egg, and one with the crushed coating mix.",
-      "4) Prepare your tofu by patting dry with kitchen towel. Coat each piece fully in cornflour, then egg, then the tortilla crisps mixture. Ensure complete coverage.",
-      "5) Place each coated piece on a baking tray and spray with low-calorie cooking spray. Bake for 25 minutes, then carefully flip, spray again and bake for a further 20 minutes until crisp and golden.",
-      "Finish with a quick yogurt-herb sauce.",
-      "Finish with fresh herbs and a squeeze of lemon or lime."
+      "2) Cut the potatoes into wedges, spread them on a baking tray, season with a little paprika, chilli flakes, salt and pepper, spray with low-calorie cooking spray and bake for 25 minutes, turning once, until golden and crisp.",
+      "3) In a shallow bowl, mix the cornflour with the paprika, garlic, onion powder, dried oregano, dried thyme and chilli flakes to make a Cajun-style coating.",
+      "4) Beat the egg in a second shallow bowl. Pat the tofu pieces dry with kitchen towel, then coat them first in the spiced cornflour, then in egg, then again in the cornflour so they are fully covered.",
+      "5) Place the coated tofu on a baking tray, spray with low-calorie cooking spray and bake for 25 minutes, then carefully flip, spray again and bake for a further 15–20 minutes until crisp and golden.",
+      "6) Lightly toast the burger bun, then stack the crispy Cajun tofu inside and serve with the hot wedges on the side, finishing everything with a squeeze of lime."
     ],
     "prepTime": 15,
     "cookTime": 45,
@@ -30220,19 +30485,48 @@
         "unit": "g"
       },
       {
-        "name": "hot sauce (Buffalo-style)",
-        "quantity": 10,
-        "unit": "ml"
+        "name": "paprika",
+        "quantity": 1,
+        "unit": "tsp"
+      },
+      {
+        "name": "garlic",
+        "quantity": 1,
+        "unit": "tsp"
+      },
+      {
+        "name": "onion powder",
+        "quantity": 1,
+        "unit": "tsp"
+      },
+      {
+        "name": "dried oregano",
+        "quantity": 0.5,
+        "unit": "tsp"
+      },
+      {
+        "name": "dried thyme",
+        "quantity": 0.5,
+        "unit": "tsp"
+      },
+      {
+        "name": "chilli flakes",
+        "quantity": 0.5,
+        "unit": "tsp"
+      },
+      {
+        "name": "lime",
+        "quantity": 1,
+        "unit": "pc"
       }
     ],
     "instructions": [
       "1) First, preheat your oven to 180Â°C.",
-      "2) Then place the tortilla crisps, spices and seasonings in a zip-lock food bag and crush with a rolling pin until fine crumbs form.",
-      "3) Next, set up a coating station with three shallow bowls â€” one with cornflour, one with beaten egg, and one with the crushed coating mix.",
-      "4) Prepare your turkey mince by patting dry with kitchen towel. Coat each piece fully in cornflour, then egg, then the tortilla crisps mixture. Ensure complete coverage.",
-      "5) Place each coated piece on a baking tray and spray with low-calorie cooking spray. Bake for 25 minutes, then carefully flip, spray again and bake for a further 20 minutes until crisp and golden.",
-      "Finish with a quick yogurt-herb sauce.",
-      "Finish with fresh herbs and a squeeze of lemon or lime."
+      "2) Cut the potatoes into wedges, spread them on a baking tray, season with a little paprika, chilli flakes, salt and pepper, spray with low-calorie cooking spray and bake for 25 minutes, turning once, until golden and crisp.",
+      "3) In a shallow bowl, mix the cornflour with the paprika, garlic, onion powder, dried oregano, dried thyme and chilli flakes to make a Cajun-style coating.",
+      "4) Beat the egg in a second shallow bowl. Pat the turkey mince patties dry with kitchen towel, then coat them first in the spiced cornflour, then in egg, then again in the cornflour so they are fully covered.",
+      "5) Place the coated turkey patties on a baking tray, spray with low-calorie cooking spray and bake for 25 minutes, then carefully flip, spray again and bake for a further 15–20 minutes until crisp and cooked through.",
+      "6) Lightly toast the burger bun, then stack the crispy Cajun turkey mince patty inside and serve with the hot wedges on the side, finishing everything with a squeeze of lime."
     ],
     "prepTime": 15,
     "cookTime": 45,
@@ -30403,16 +30697,50 @@
         "name": "cornflour",
         "quantity": 30,
         "unit": "g"
+      },
+      {
+        "name": "paprika",
+        "quantity": 1,
+        "unit": "tsp"
+      },
+      {
+        "name": "garlic",
+        "quantity": 1,
+        "unit": "tsp"
+      },
+      {
+        "name": "onion powder",
+        "quantity": 1,
+        "unit": "tsp"
+      },
+      {
+        "name": "dried oregano",
+        "quantity": 0.5,
+        "unit": "tsp"
+      },
+      {
+        "name": "dried thyme",
+        "quantity": 0.5,
+        "unit": "tsp"
+      },
+      {
+        "name": "chilli flakes",
+        "quantity": 0.5,
+        "unit": "tsp"
+      },
+      {
+        "name": "lime",
+        "quantity": 1,
+        "unit": "pc"
       }
     ],
     "instructions": [
       "1) First, preheat your oven to 180Â°C.",
-      "2) Then place the tortilla crisps, spices and seasonings in a zip-lock food bag and crush with a rolling pin until fine crumbs form.",
-      "3) Next, set up a coating station with three shallow bowls â€” one with cornflour, one with beaten egg, and one with the crushed coating mix.",
-      "4) Prepare your beef mince by patting dry with kitchen towel. Coat each piece fully in cornflour, then egg, then the tortilla crisps mixture. Ensure complete coverage.",
-      "5) Place each coated piece on a baking tray and spray with low-calorie cooking spray. Bake for 25 minutes, then carefully flip, spray again and bake for a further 20 minutes until crisp and golden.",
-      "Finish with a quick yogurt-herb sauce.",
-      "Finish with fresh herbs and a squeeze of lemon or lime."
+      "2) Cut the potatoes into wedges, spread them on a baking tray, season with a little paprika, chilli flakes, salt and pepper, spray with low-calorie cooking spray and bake for 25 minutes, turning once, until golden and crisp.",
+      "3) In a shallow bowl, mix the cornflour with the paprika, garlic, onion powder, dried oregano, dried thyme and chilli flakes to make a Cajun-style coating.",
+      "4) Beat the egg in a second shallow bowl. Pat the beef mince patties dry with kitchen towel, then coat them first in the spiced cornflour, then in egg, then again in the cornflour so they are fully covered.",
+      "5) Place the coated beef patties on a baking tray, spray with low-calorie cooking spray and bake for 25 minutes, then carefully flip, spray again and bake for a further 15–20 minutes until crisp and cooked through.",
+      "6) Lightly toast the burger bun, then stack the crispy Cajun beef mince patty inside and serve with the hot wedges on the side, finishing everything with a squeeze of lime."
     ],
     "prepTime": 15,
     "cookTime": 45,
@@ -30463,16 +30791,50 @@
         "name": "cornflour",
         "quantity": 30,
         "unit": "g"
+      },
+      {
+        "name": "paprika",
+        "quantity": 1,
+        "unit": "tsp"
+      },
+      {
+        "name": "garlic",
+        "quantity": 1,
+        "unit": "tsp"
+      },
+      {
+        "name": "onion powder",
+        "quantity": 1,
+        "unit": "tsp"
+      },
+      {
+        "name": "dried oregano",
+        "quantity": 0.5,
+        "unit": "tsp"
+      },
+      {
+        "name": "dried thyme",
+        "quantity": 0.5,
+        "unit": "tsp"
+      },
+      {
+        "name": "chilli flakes",
+        "quantity": 0.5,
+        "unit": "tsp"
+      },
+      {
+        "name": "lime",
+        "quantity": 1,
+        "unit": "pc"
       }
     ],
     "instructions": [
       "1) First, preheat your oven to 180Â°C.",
-      "2) Then place the tortilla crisps, spices and seasonings in a zip-lock food bag and crush with a rolling pin until fine crumbs form.",
-      "3) Next, set up a coating station with three shallow bowls â€” one with cornflour, one with beaten egg, and one with the crushed coating mix.",
-      "4) Prepare your salmon fillet by patting dry with kitchen towel. Coat each piece fully in cornflour, then egg, then the tortilla crisps mixture. Ensure complete coverage.",
-      "5) Place each coated piece on a baking tray and spray with low-calorie cooking spray. Bake for 25 minutes, then carefully flip, spray again and bake for a further 20 minutes until crisp and golden.",
-      "Finish with a lemon-dill yogurt sauce.",
-      "Finish with lemon juice and fresh parsley."
+      "2) Cut the potatoes into wedges, spread them on a baking tray, season with a little paprika, chilli flakes, salt and pepper, spray with low-calorie cooking spray and bake for 25 minutes, turning once, until golden and crisp.",
+      "3) In a shallow bowl, mix the cornflour with the paprika, garlic, onion powder, dried oregano, dried thyme and chilli flakes to make a Cajun-style coating.",
+      "4) Beat the egg in a second shallow bowl. Pat the salmon fillet pieces dry with kitchen towel, then coat them first in the spiced cornflour, then in egg, then again in the cornflour so they are fully covered.",
+      "5) Place the coated salmon on a baking tray, spray with low-calorie cooking spray and bake for 25 minutes, then carefully flip, spray again and bake for a further 15–20 minutes until crisp and cooked through.",
+      "6) Lightly toast the burger bun, then stack the crispy Cajun salmon inside and serve with the hot wedges on the side, finishing everything with a squeeze of lime."
     ],
     "prepTime": 15,
     "cookTime": 45,
@@ -30583,16 +30945,50 @@
         "name": "cornflour",
         "quantity": 30,
         "unit": "g"
+      },
+      {
+        "name": "paprika",
+        "quantity": 1,
+        "unit": "tsp"
+      },
+      {
+        "name": "garlic",
+        "quantity": 1,
+        "unit": "tsp"
+      },
+      {
+        "name": "onion powder",
+        "quantity": 1,
+        "unit": "tsp"
+      },
+      {
+        "name": "dried oregano",
+        "quantity": 0.5,
+        "unit": "tsp"
+      },
+      {
+        "name": "dried thyme",
+        "quantity": 0.5,
+        "unit": "tsp"
+      },
+      {
+        "name": "chilli flakes",
+        "quantity": 0.5,
+        "unit": "tsp"
+      },
+      {
+        "name": "lime",
+        "quantity": 1,
+        "unit": "pc"
       }
     ],
     "instructions": [
       "1) First, preheat your oven to 180Â°C.",
-      "2) Then place the tortilla crisps, spices and seasonings in a zip-lock food bag and crush with a rolling pin until fine crumbs form.",
-      "3) Next, set up a coating station with three shallow bowls â€” one with cornflour, one with beaten egg, and one with the crushed coating mix.",
-      "4) Prepare your chicken breast by patting dry with kitchen towel. Coat each piece fully in cornflour, then egg, then the tortilla crisps mixture. Ensure complete coverage.",
-      "5) Place each coated piece on a baking tray and spray with low-calorie cooking spray. Bake for 25 minutes, then carefully flip, spray again and bake for a further 20 minutes until crisp and golden.",
-      "Finish with a quick yogurt-herb sauce.",
-      "Finish with fresh herbs and a squeeze of lemon or lime."
+      "2) Cut the potatoes into wedges, spread them on a baking tray, season with a little paprika, chilli flakes, salt and pepper, spray with low-calorie cooking spray and bake for 25 minutes, turning once, until golden and crisp.",
+      "3) In a shallow bowl, mix the cornflour with the paprika, garlic, onion powder, dried oregano, dried thyme and chilli flakes to make a Cajun-style coating.",
+      "4) Beat the egg in a second shallow bowl. Pat the chicken breast dry with kitchen towel, then coat it first in the spiced cornflour, then in egg, then again in the cornflour so it is fully covered.",
+      "5) Place the coated chicken breast on a baking tray, spray with low-calorie cooking spray and bake for 25 minutes, then carefully flip, spray again and bake for a further 15–20 minutes until crisp and cooked through.",
+      "6) Lightly toast the burger bun, then stack the crispy Cajun chicken breast inside and serve with the hot wedges on the side, finishing everything with a squeeze of lime."
     ],
     "prepTime": 15,
     "cookTime": 45,
@@ -30986,11 +31382,31 @@
         "name": "red onion",
         "quantity": 50,
         "unit": "g"
+      },
+      {
+        "name": "olive oil",
+        "quantity": 5,
+        "unit": "ml"
+      },
+      {
+        "name": "garlic",
+        "quantity": 1,
+        "unit": "tsp"
+      },
+      {
+        "name": "dried mixed herbs",
+        "quantity": 1,
+        "unit": "tsp"
+      },
+      {
+        "name": "yogurt",
+        "quantity": 15,
+        "unit": "g"
       }
     ],
     "instructions": [
       "First, heat the olive oil in a large non-stick pan. Add the bell pepper and cook for a few minutes until softened. Remove from the pan and set aside.",
-      "Add a little more olive oil if necessary and then add your tofu pieces. Fry until completely cooked through and no longer pink, then add the veg back in along with your seasoning and salt to taste. Stir well to combine.",
+      "Add a little more olive oil if necessary and then add your tofu pieces. Fry until golden and heated through, then add the veg back in along with the garlic, dried mixed herbs, and salt to taste. Stir well, then stir through the yogurt with a splash of water to create a light creamy garlic sauce coating everything.",
       "Next add the wholewheat pasta and stock, cover the pan, and leave to simmer for 15 minutes.",
       "Finish with cracked black pepper and a sprinkle of parmesan or fresh herbs."
     ],
@@ -31450,11 +31866,31 @@
         "name": "red onion",
         "quantity": 50,
         "unit": "g"
+      },
+      {
+        "name": "olive oil",
+        "quantity": 5,
+        "unit": "ml"
+      },
+      {
+        "name": "garlic",
+        "quantity": 1,
+        "unit": "tsp"
+      },
+      {
+        "name": "dried mixed herbs",
+        "quantity": 1,
+        "unit": "tsp"
+      },
+      {
+        "name": "yogurt",
+        "quantity": 15,
+        "unit": "g"
       }
     ],
     "instructions": [
       "First, heat the olive oil in a large non-stick pan. Add the bell pepper and cook for a few minutes until softened. Remove from the pan and set aside.",
-      "Add a little more olive oil if necessary and then add your salmon fillet pieces. Fry until completely cooked through and no longer pink, then add the veg back in along with your seasoning and salt to taste. Stir well to combine.",
+      "Add a little more olive oil if necessary and then add your salmon fillet pieces. Fry until completely cooked through and flaky, then add the veg back in along with the garlic, dried mixed herbs, and salt to taste. Stir well, then stir through the yogurt with a splash of water to create a light creamy garlic sauce coating everything.",
       "Next add the wholewheat pasta and stock, cover the pan, and leave to simmer for 15 minutes.",
       "Finish with cracked black pepper and a sprinkle of parmesan or fresh herbs."
     ],
@@ -31507,13 +31943,48 @@
         "name": "red onion",
         "quantity": 50,
         "unit": "g"
+      },
+      {
+        "name": "olive oil",
+        "quantity": 5,
+        "unit": "ml"
+      },
+      {
+        "name": "paprika",
+        "quantity": 1,
+        "unit": "tsp"
+      },
+      {
+        "name": "garlic",
+        "quantity": 1,
+        "unit": "tsp"
+      },
+      {
+        "name": "onion powder",
+        "quantity": 1,
+        "unit": "tsp"
+      },
+      {
+        "name": "dried oregano",
+        "quantity": 0.5,
+        "unit": "tsp"
+      },
+      {
+        "name": "dried thyme",
+        "quantity": 0.5,
+        "unit": "tsp"
+      },
+      {
+        "name": "chilli flakes",
+        "quantity": 0.5,
+        "unit": "tsp"
       }
     ],
     "instructions": [
       "First, heat the olive oil in a large non-stick pan. Add the bell pepper and cook for a few minutes until softened. Remove from the pan and set aside.",
-      "Add a little more olive oil if necessary and then add your turkey mince pieces. Fry until completely cooked through and no longer pink, then add the veg back in along with your seasoning and salt to taste. Stir well to combine.",
+      "Add a little more olive oil if necessary and then add your turkey mince pieces. Fry until completely cooked through and no longer pink, then add the veg back in along with the paprika, garlic, onion powder, dried oregano, dried thyme, chilli flakes, and salt to taste. Stir well to coat everything in the Cajun spices.",
       "Next add the wholewheat pasta and stock, cover the pan, and leave to simmer for 15 minutes.",
-      "Finish with cracked black pepper and a sprinkle of parmesan or fresh herbs."
+      "Finish with cracked black pepper and a sprinkle of fresh herbs."
     ],
     "prepTime": 10,
     "cookTime": 20,
@@ -31621,11 +32092,31 @@
         "name": "red onion",
         "quantity": 50,
         "unit": "g"
+      },
+      {
+        "name": "olive oil",
+        "quantity": 5,
+        "unit": "ml"
+      },
+      {
+        "name": "garlic",
+        "quantity": 1,
+        "unit": "tsp"
+      },
+      {
+        "name": "dried mixed herbs",
+        "quantity": 1,
+        "unit": "tsp"
+      },
+      {
+        "name": "yogurt",
+        "quantity": 15,
+        "unit": "g"
       }
     ],
     "instructions": [
       "First, heat the olive oil in a large non-stick pan. Add the bell pepper and cook for a few minutes until softened. Remove from the pan and set aside.",
-      "Add a little more olive oil if necessary and then add your turkey mince pieces. Fry until completely cooked through and no longer pink, then add the veg back in along with your seasoning and salt to taste. Stir well to combine.",
+      "Add a little more olive oil if necessary and then add your turkey mince pieces. Fry until completely cooked through and no longer pink, then add the veg back in along with the garlic, dried mixed herbs, and salt to taste. Stir well, then stir through the yogurt with a splash of water to create a light creamy garlic sauce coating everything.",
       "Next add the wholewheat pasta and stock, cover the pan, and leave to simmer for 15 minutes.",
       "Finish with cracked black pepper and a sprinkle of parmesan or fresh herbs."
     ],
@@ -31735,11 +32226,31 @@
         "name": "red onion",
         "quantity": 50,
         "unit": "g"
+      },
+      {
+        "name": "olive oil",
+        "quantity": 5,
+        "unit": "ml"
+      },
+      {
+        "name": "garlic",
+        "quantity": 1,
+        "unit": "tsp"
+      },
+      {
+        "name": "dried mixed herbs",
+        "quantity": 1,
+        "unit": "tsp"
+      },
+      {
+        "name": "yogurt",
+        "quantity": 15,
+        "unit": "g"
       }
     ],
     "instructions": [
       "First, heat the olive oil in a large non-stick pan. Add the bell pepper and cook for a few minutes until softened. Remove from the pan and set aside.",
-      "Add a little more olive oil if necessary and then add your prawns pieces. Fry until completely cooked through and no longer pink, then add the veg back in along with your seasoning and salt to taste. Stir well to combine.",
+      "Add a little more olive oil if necessary and then add your prawns pieces. Fry until pink and opaque, then add the veg back in along with the garlic, dried mixed herbs, and salt to taste. Stir well, then stir through the yogurt with a splash of water to create a light creamy garlic sauce coating everything.",
       "Next add the wholewheat pasta and stock, cover the pan, and leave to simmer for 15 minutes.",
       "Finish with cracked black pepper and a sprinkle of parmesan or fresh herbs."
     ],
