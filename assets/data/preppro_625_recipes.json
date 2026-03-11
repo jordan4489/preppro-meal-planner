@@ -28268,14 +28268,39 @@
         "name": "spinach",
         "quantity": 30,
         "unit": "g"
+      },
+      {
+        "name": "olive oil",
+        "quantity": 5,
+        "unit": "ml"
+      },
+      {
+        "name": "garlic",
+        "quantity": 5,
+        "unit": "g"
+      },
+      {
+        "name": "dried oregano",
+        "quantity": 0.5,
+        "unit": "tsp"
+      },
+      {
+        "name": "smoked paprika",
+        "quantity": 0.5,
+        "unit": "tsp"
+      },
+      {
+        "name": "lemon",
+        "quantity": 1,
+        "unit": "pc"
       }
     ],
     "instructions": [
-      "1) Firstly, make a marinade for your halloumi by mixing the spices, yoghurt and aromatics in a bowl. Coat the halloumi thoroughly and leave aside for at least 20 minutes â€” ideally refrigerate overnight.",
-      "2) Then, prepare your vegetables by slicing the bell pepper into bite-sized pieces.",
-      "3) Next, heat a grill pan over medium heat and cook the halloumi for 5-6 minutes on each side, or until golden and slightly charred.",
-      "4) Meanwhile, warm your flatbread and prepare any sauces or garnishes.",
-      "Finish with fresh herbs and a squeeze of lemon or lime."
+      "1) Firstly, make a Mediterranean-style yoghurt marinade by mixing the yoghurt, olive oil, dried oregano, smoked paprika, crushed garlic and a squeeze of lemon in a bowl. Coat the halloumi thoroughly and leave aside for at least 20 minutes - ideally refrigerate overnight.",
+      "2) Then, prepare your vegetables by slicing the bell pepper and red onion into bite-sized pieces.",
+      "3) Next, heat a grill or non-stick pan over medium heat and cook the marinated halloumi for 3-4 minutes on each side, or until golden and slightly charred, adding the bell pepper to soften alongside.",
+      "4) Warm your flatbread, then layer it with spinach, the grilled vegetables and halloumi, drizzling over any remaining yoghurt marinade.",
+      "Finish with an extra squeeze of lemon before serving."
     ],
     "prepTime": 10,
     "cookTime": 15,
@@ -28741,14 +28766,39 @@
         "name": "spinach",
         "quantity": 30,
         "unit": "g"
+      },
+      {
+        "name": "olive oil",
+        "quantity": 5,
+        "unit": "ml"
+      },
+      {
+        "name": "garlic",
+        "quantity": 5,
+        "unit": "g"
+      },
+      {
+        "name": "dried oregano",
+        "quantity": 0.5,
+        "unit": "tsp"
+      },
+      {
+        "name": "smoked paprika",
+        "quantity": 0.5,
+        "unit": "tsp"
+      },
+      {
+        "name": "lemon",
+        "quantity": 1,
+        "unit": "pc"
       }
     ],
     "instructions": [
-      "1) Firstly, make a marinade for your chicken breast by mixing the spices, yoghurt and aromatics in a bowl. Coat the chicken breast thoroughly and leave aside for at least 20 minutes â€” ideally refrigerate overnight.",
-      "2) Then, prepare your vegetables by slicing the bell pepper into bite-sized pieces.",
-      "3) Next, heat a grill pan over medium heat and cook the chicken breast for 5-6 minutes on each side, or until golden and slightly charred.",
-      "4) Meanwhile, warm your flatbread and prepare any sauces or garnishes.",
-      "Finish with fresh herbs and a squeeze of lemon or lime."
+      "1) Firstly, make a Mediterranean-style yoghurt marinade by mixing the yoghurt, olive oil, dried oregano, smoked paprika, crushed garlic and a squeeze of lemon in a bowl. Coat the chicken breast thoroughly and leave aside for at least 20 minutes - ideally refrigerate overnight.",
+      "2) Then, prepare your vegetables by slicing the bell pepper and red onion into bite-sized pieces.",
+      "3) Next, heat a grill or non-stick pan over medium heat and cook the marinated chicken breast for 5-6 minutes on each side, or until golden and cooked through, adding the bell pepper to soften alongside.",
+      "4) Warm your flatbread, then layer it with spinach, the grilled vegetables and sliced chicken, drizzling over any remaining yoghurt marinade.",
+      "Finish with an extra squeeze of lemon before serving."
     ],
     "prepTime": 10,
     "cookTime": 15,
@@ -28893,14 +28943,39 @@
         "name": "spinach",
         "quantity": 30,
         "unit": "g"
+      },
+      {
+        "name": "olive oil",
+        "quantity": 5,
+        "unit": "ml"
+      },
+      {
+        "name": "garlic",
+        "quantity": 5,
+        "unit": "g"
+      },
+      {
+        "name": "dried oregano",
+        "quantity": 0.5,
+        "unit": "tsp"
+      },
+      {
+        "name": "smoked paprika",
+        "quantity": 0.5,
+        "unit": "tsp"
+      },
+      {
+        "name": "lemon",
+        "quantity": 1,
+        "unit": "pc"
       }
     ],
     "instructions": [
-      "1) Firstly, make a marinade for your tofu by mixing the spices, yoghurt and aromatics in a bowl. Coat the tofu thoroughly and leave aside for at least 20 minutes â€” ideally refrigerate overnight.",
-      "2) Then, prepare your vegetables by slicing the bell pepper into bite-sized pieces.",
-      "3) Next, heat a grill pan over medium heat and cook the tofu for 5-6 minutes on each side, or until golden and slightly charred.",
-      "4) Meanwhile, warm your flatbread and prepare any sauces or garnishes.",
-      "Finish with fresh herbs and a squeeze of lemon or lime."
+      "1) Firstly, make a Mediterranean-style yoghurt marinade by mixing the yoghurt, olive oil, dried oregano, smoked paprika, crushed garlic and a squeeze of lemon in a bowl. Coat the tofu thoroughly and leave aside for at least 20 minutes - ideally refrigerate overnight.",
+      "2) Then, prepare your vegetables by slicing the bell pepper and red onion into bite-sized pieces.",
+      "3) Next, heat a grill or non-stick pan over medium heat and cook the marinated tofu for 5-6 minutes on each side, or until golden and slightly charred, adding the bell pepper to soften alongside.",
+      "4) Warm your flatbread, then layer it with spinach, the grilled vegetables and tofu, drizzling over any remaining yoghurt marinade.",
+      "Finish with an extra squeeze of lemon before serving."
     ],
     "prepTime": 10,
     "cookTime": 15,
@@ -33716,16 +33791,26 @@
         "unit": "g"
       },
       {
+        "name": "garlic",
+        "quantity": 5,
+        "unit": "g"
+      },
+      {
+        "name": "smoked paprika",
+        "quantity": 0.5,
+        "unit": "tsp"
+      },
+      {
         "name": "feta cheese",
         "quantity": 30,
         "unit": "g"
       }
     ],
     "instructions": [
-      "Sauté peppers and tomatoes",
-      "Create wells for eggs",
-      "Cook until eggs set",
-      "Finish with fresh fruit or herbs and a small drizzle of oil or honey as appropriate."
+      "Heat a non-stick pan over medium heat and add the bell pepper with a splash of water, cooking until starting to soften.",
+      "Stir in the crushed garlic and smoked paprika, then add the tomatoes and simmer for a few minutes until slightly thickened.",
+      "Make small wells in the sauce and crack in the eggs, then cover and cook until the whites are set and the yolks are cooked to your liking.",
+      "Crumble the feta cheese over the shakshuka before serving."
     ],
     "steps": []
   },
