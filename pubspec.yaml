@@ -37,7 +37,6 @@ flutter:
   assets:
     - assets/data/preppro_500_recipes.json
     - assets/data/preppro_625_recipes.json
-    - assets/images/logo_preppro_blue.png
-    - assets/images/logo_icon_foreground.png
     - assets/images/PrepProBlue.png
+    - assets/images/PrepProWhite.png
     - assets/images/recipes/

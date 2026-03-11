@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
@@ -14,8 +15,10 @@ Future<void> main() async {
   // Ensure bindings before using platform plugins (SharedPreferences etc.)
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Initialize Google Mobile Ads (uses test IDs by default)
-  await MobileAds.instance.initialize();
+  // Initialize Google Mobile Ads on supported platforms only (not web)
+  if (!kIsWeb) {
+    await MobileAds.instance.initialize();
+  }
 
   // Initialize Firebase
   if (Firebase.apps.isEmpty) {
