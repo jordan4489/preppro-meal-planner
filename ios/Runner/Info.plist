@@ -47,6 +47,8 @@
 		<true/>
 		<key>UIStatusBarHidden</key>
 		<false/>
+		<key>ITSAppUsesNonExemptEncryption</key>
+		<false/>
 		<!-- Google Mobile Ads iOS App ID -->
 		<key>GADApplicationIdentifier</key>
 		<string>ca-app-pub-8700408294196968~5271937425</string>

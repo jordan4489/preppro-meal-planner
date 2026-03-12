@@ -3283,19 +3283,29 @@
         "unit": "g"
       },
       {
-        "name": "peanut butter",
-        "quantity": 10,
-        "unit": "g"
-      },
-      {
-        "name": "soy sauce",
-        "quantity": 10,
+        "name": "olive oil",
+        "quantity": 5,
         "unit": "ml"
       },
       {
-        "name": "paprika",
-        "quantity": 1,
+        "name": "garlic",
+        "quantity": 5,
+        "unit": "g"
+      },
+      {
+        "name": "dried oregano",
+        "quantity": 0.5,
         "unit": "tsp"
+      },
+      {
+        "name": "smoked paprika",
+        "quantity": 0.5,
+        "unit": "tsp"
+      },
+      {
+        "name": "lemon",
+        "quantity": 1,
+        "unit": "pc"
       },
       {
         "name": "cumin",
@@ -3305,10 +3315,10 @@
     ],
     "instructions": [
       "First, cook the brown rice according to packet instructions and set aside.",
-      "Then heat a non-stick pan with a little oil and cook the tempeh until browned and cooked through.",
-      "Next, add the broccoli to the same pan and saute until tender.",
-      "Glaze with soy sauce, sesame oil, and grated ginger for a bold umami hit.",
-      "Finish with sesame seeds and sliced spring onion."
+      "In a bowl, whisk together the olive oil, crushed garlic, dried oregano, smoked paprika, cumin and a squeeze of lemon to make a Mediterranean-style dressing, then toss the tempeh in this mixture.",
+      "Preheat the air fryer to 190°C and cook the dressed tempeh for 10–12 minutes, shaking halfway, until golden and lightly crisp.",
+      "Meanwhile, sauté the broccoli and tomato in a pan with a splash of water until tender.",
+      "Serve the tempeh over the brown rice with the vegetables, finishing with an extra squeeze of lemon."
     ],
     "prepTime": 18,
     "cookTime": 18,
@@ -4057,7 +4067,7 @@
         "unit": "g"
       },
       {
-        "name": "noodles (rice)",
+        "name": "wholewheat pasta",
         "quantity": 80,
         "unit": "g"
       },
@@ -4072,17 +4082,27 @@
         "unit": "g"
       },
       {
-        "name": "peanut butter",
-        "quantity": 10,
+        "name": "Greek yoghurt",
+        "quantity": 40,
         "unit": "g"
       },
       {
-        "name": "ginger",
-        "quantity": 1,
+        "name": "olive oil",
+        "quantity": 5,
+        "unit": "ml"
+      },
+      {
+        "name": "garlic",
+        "quantity": 5,
+        "unit": "g"
+      },
+      {
+        "name": "dried oregano",
+        "quantity": 0.5,
         "unit": "tsp"
       },
       {
-        "name": "lime",
+        "name": "lemon",
         "quantity": 1,
         "unit": "pc"
       },
@@ -4093,11 +4113,11 @@
       }
     ],
     "instructions": [
-      "First, cook the noodles (rice) according to packet instructions and set aside.",
-      "Then heat a non-stick pan with a little oil and cook the turkey mince until browned and cooked through.",
-      "Next, add the broccoli to the same pan and saute until tender.",
-      "Whisk in peanut butter and soy sauce for a rich satay-style coating.",
-      "Finish with chopped peanuts and a squeeze of lime."
+      "First, cook the wholewheat pasta according to packet instructions until al dente, reserving a splash of the cooking water, then drain and set aside.",
+      "Then heat a non-stick pan with the olive oil and cook the turkey mince until browned and cooked through.",
+      "Next, add the broccoli and mushrooms to the same pan and sauté until tender.",
+      "Stir in the Greek yoghurt, crushed garlic, dried oregano, chilli flakes, a squeeze of lemon and a splash of the reserved pasta water to create a tangy Mediterranean-style sauce, then toss the cooked pasta through the pan to coat.",
+      "Finish with an extra squeeze of lemon and season to taste before serving."
     ],
     "prepTime": 18,
     "cookTime": 12,
@@ -5939,7 +5959,7 @@
         "unit": "g"
       },
       {
-        "name": "peanut butter",
+        "name": "tahini",
         "quantity": 20,
         "unit": "g"
       },
@@ -5949,7 +5969,7 @@
         "unit": "tsp"
       },
       {
-        "name": "ginger",
+        "name": "garlic",
         "quantity": 1,
         "unit": "tsp"
       },
@@ -5957,14 +5977,19 @@
         "name": "paprika",
         "quantity": 1,
         "unit": "tsp"
+      },
+      {
+        "name": "lemon",
+        "quantity": 1,
+        "unit": "pc"
       }
     ],
     "instructions": [
       "First, cook the brown rice according to packet instructions and set aside.",
       "Then heat a non-stick pan with a little oil and cook the beef mince until browned and cooked through.",
-      "Next, add the broccoli to the same pan and saute until tender.",
-      "Whisk in peanut butter and soy sauce for a rich satay-style coating.",
-      "Finish with chopped peanuts and a squeeze of lime."
+      "Next, add the broccoli and sweet potato to the same pan and sauté until tender.",
+      "Stir in the tahini, paprika, garlic, chilli flakes, a squeeze of lemon and a splash of water to create a rich Mediterranean-style coating, then toss everything to coat evenly.",
+      "Finish with an extra squeeze of lemon before serving."
     ],
     "prepTime": 10,
     "cookTime": 20,
@@ -12823,7 +12848,7 @@
         "unit": "g"
       },
       {
-        "name": "peanut butter",
+        "name": "tahini",
         "quantity": 10,
         "unit": "g"
       },
@@ -12838,17 +12863,17 @@
         "unit": "tsp"
       },
       {
-        "name": "lime",
+        "name": "lemon",
         "quantity": 1,
         "unit": "pc"
       }
     ],
     "instructions": [
-      "Cook the wholewheat pasta according to packet instructions.",
-      "Heat a pan with a little oil and cook the tuna (canned) until golden and cooked through.",
-      "Add the onion and bell pepper and saute until tender-crisp.",
-      "Whisk in peanut butter and soy sauce for a rich satay-style coating.",
-      "Finish with chopped peanuts and a squeeze of lime."
+      "Cook the wholewheat pasta according to packet instructions, reserving a splash of the cooking water.",
+      "Heat a pan with a little oil and cook the tuna (canned) until warmed through and lightly golden.",
+      "Add the onion and bell pepper and sauté until tender-crisp.",
+      "Whisk in the tahini, cumin, paprika, a squeeze of lemon and a splash of the reserved pasta water to create a fiery Mediterranean-style sauce, then toss the cooked pasta through to coat.",
+      "Finish with an extra squeeze of lemon before serving."
     ],
     "prepTime": 15,
     "cookTime": 14,
@@ -19070,7 +19095,7 @@
         "unit": "g"
       },
       {
-        "name": "sesame oil",
+        "name": "olive oil",
         "quantity": 5,
         "unit": "ml"
       },
@@ -19080,7 +19105,12 @@
         "unit": "tsp"
       },
       {
-        "name": "ginger",
+        "name": "dried oregano",
+        "quantity": 0.5,
+        "unit": "tsp"
+      },
+      {
+        "name": "garlic",
         "quantity": 1,
         "unit": "tsp"
       },
@@ -19094,8 +19124,8 @@
       "First, cook the brown rice according to packet instructions and set aside.",
       "Then heat a non-stick pan with a little oil and cook the tuna (canned) until browned and cooked through.",
       "Next, add the onion to the same pan and saute until tender.",
-      "Season with lemon zest, garlic, and chopped herbs, then toss to coat.",
-      "Finish with lemon juice and fresh parsley."
+      "Season with lemon zest, garlic and dried oregano, then toss to coat.",
+      "Finish with lemon juice before serving."
     ],
     "prepTime": 8,
     "cookTime": 16,
@@ -26099,14 +26129,39 @@
         "name": "spinach",
         "quantity": 30,
         "unit": "g"
+      },
+      {
+        "name": "olive oil",
+        "quantity": 5,
+        "unit": "ml"
+      },
+      {
+        "name": "garlic",
+        "quantity": 5,
+        "unit": "g"
+      },
+      {
+        "name": "dried oregano",
+        "quantity": 0.5,
+        "unit": "tsp"
+      },
+      {
+        "name": "smoked paprika",
+        "quantity": 0.5,
+        "unit": "tsp"
+      },
+      {
+        "name": "lemon",
+        "quantity": 1,
+        "unit": "pc"
       }
     ],
     "instructions": [
-      "1) Firstly, make a marinade for your halloumi by mixing the spices, yoghurt and aromatics in a bowl. Coat the halloumi thoroughly and leave aside for at least 20 minutes â€” ideally refrigerate overnight.",
-      "2) Then, prepare your vegetables by slicing the bell pepper into bite-sized pieces.",
-      "3) Next, heat a grill pan over medium heat and cook the halloumi for 5-6 minutes on each side, or until golden and slightly charred.",
-      "4) Meanwhile, warm your flatbread and prepare any sauces or garnishes.",
-      "Finish with fresh herbs and a squeeze of lemon or lime."
+      "1) Firstly, make a Mediterranean-style yoghurt marinade by mixing the yoghurt, olive oil, dried oregano, smoked paprika, crushed garlic and a squeeze of lemon in a bowl. Coat the halloumi thoroughly and leave aside for at least 20 minutes - ideally refrigerate overnight.",
+      "2) Then, prepare your vegetables by slicing the bell pepper and red onion into bite-sized pieces.",
+      "3) Next, heat a grill or non-stick pan over medium heat and cook the marinated halloumi for 3-4 minutes on each side, or until golden and slightly charred, adding the bell pepper to soften alongside.",
+      "4) Warm your flatbread, then layer it with spinach, the grilled vegetables and halloumi, drizzling over any remaining yoghurt marinade.",
+      "Finish with an extra squeeze of lemon before serving."
     ],
     "prepTime": 10,
     "cookTime": 15,
@@ -26542,14 +26597,39 @@
         "name": "spinach",
         "quantity": 30,
         "unit": "g"
+      },
+      {
+        "name": "olive oil",
+        "quantity": 5,
+        "unit": "ml"
+      },
+      {
+        "name": "garlic",
+        "quantity": 5,
+        "unit": "g"
+      },
+      {
+        "name": "dried oregano",
+        "quantity": 0.5,
+        "unit": "tsp"
+      },
+      {
+        "name": "smoked paprika",
+        "quantity": 0.5,
+        "unit": "tsp"
+      },
+      {
+        "name": "lemon",
+        "quantity": 1,
+        "unit": "pc"
       }
     ],
     "instructions": [
-      "1) Firstly, make a marinade for your chicken breast by mixing the spices, yoghurt and aromatics in a bowl. Coat the chicken breast thoroughly and leave aside for at least 20 minutes â€” ideally refrigerate overnight.",
-      "2) Then, prepare your vegetables by slicing the bell pepper into bite-sized pieces.",
-      "3) Next, heat a grill pan over medium heat and cook the chicken breast for 5-6 minutes on each side, or until golden and slightly charred.",
-      "4) Meanwhile, warm your flatbread and prepare any sauces or garnishes.",
-      "Finish with fresh herbs and a squeeze of lemon or lime."
+      "1) Firstly, make a Mediterranean-style yoghurt marinade by mixing the yoghurt, olive oil, dried oregano, smoked paprika, crushed garlic and a squeeze of lemon in a bowl. Coat the chicken breast thoroughly and leave aside for at least 20 minutes - ideally refrigerate overnight.",
+      "2) Then, prepare your vegetables by slicing the bell pepper and red onion into bite-sized pieces.",
+      "3) Next, heat a grill or non-stick pan over medium heat and cook the marinated chicken breast for 5-6 minutes on each side, or until golden and cooked through, adding the bell pepper to soften alongside.",
+      "4) Warm your flatbread, then layer it with spinach, the grilled vegetables and sliced chicken, drizzling over any remaining yoghurt marinade.",
+      "Finish with an extra squeeze of lemon before serving."
     ],
     "prepTime": 10,
     "cookTime": 15,
@@ -26670,14 +26750,39 @@
         "name": "spinach",
         "quantity": 30,
         "unit": "g"
+      },
+      {
+        "name": "olive oil",
+        "quantity": 5,
+        "unit": "ml"
+      },
+      {
+        "name": "garlic",
+        "quantity": 5,
+        "unit": "g"
+      },
+      {
+        "name": "dried oregano",
+        "quantity": 0.5,
+        "unit": "tsp"
+      },
+      {
+        "name": "smoked paprika",
+        "quantity": 0.5,
+        "unit": "tsp"
+      },
+      {
+        "name": "lemon",
+        "quantity": 1,
+        "unit": "pc"
       }
     ],
     "instructions": [
-      "1) Firstly, make a marinade for your tofu by mixing the spices, yoghurt and aromatics in a bowl. Coat the tofu thoroughly and leave aside for at least 20 minutes â€” ideally refrigerate overnight.",
-      "2) Then, prepare your vegetables by slicing the bell pepper into bite-sized pieces.",
-      "3) Next, heat a grill pan over medium heat and cook the tofu for 5-6 minutes on each side, or until golden and slightly charred.",
-      "4) Meanwhile, warm your flatbread and prepare any sauces or garnishes.",
-      "Finish with fresh herbs and a squeeze of lemon or lime."
+      "1) Firstly, make a Mediterranean-style yoghurt marinade by mixing the yoghurt, olive oil, dried oregano, smoked paprika, crushed garlic and a squeeze of lemon in a bowl. Coat the tofu thoroughly and leave aside for at least 20 minutes - ideally refrigerate overnight.",
+      "2) Then, prepare your vegetables by slicing the bell pepper and red onion into bite-sized pieces.",
+      "3) Next, heat a grill or non-stick pan over medium heat and cook the marinated tofu for 5-6 minutes on each side, or until golden and slightly charred, adding the bell pepper to soften alongside.",
+      "4) Warm your flatbread, then layer it with spinach, the grilled vegetables and tofu, drizzling over any remaining yoghurt marinade.",
+      "Finish with an extra squeeze of lemon before serving."
     ],
     "prepTime": 10,
     "cookTime": 15,
@@ -30898,16 +31003,26 @@
         "unit": "g"
       },
       {
+        "name": "garlic",
+        "quantity": 5,
+        "unit": "g"
+      },
+      {
+        "name": "smoked paprika",
+        "quantity": 0.5,
+        "unit": "tsp"
+      },
+      {
         "name": "feta cheese",
         "quantity": 30,
         "unit": "g"
       }
     ],
     "instructions": [
-      "Sauté peppers and tomatoes",
-      "Create wells for eggs",
-      "Cook until eggs set",
-      "Finish with fresh fruit or herbs and a small drizzle of oil or honey as appropriate."
+      "Heat a non-stick pan over medium heat and add the bell pepper with a splash of water, cooking until starting to soften.",
+      "Stir in the crushed garlic and smoked paprika, then add the tomatoes and simmer for a few minutes until slightly thickened.",
+      "Make small wells in the sauce and crack in the eggs, then cover and cook until the whites are set and the yolks are cooked to your liking.",
+      "Crumble the feta cheese over the shakshuka before serving."
     ],
     "steps": []
   },
