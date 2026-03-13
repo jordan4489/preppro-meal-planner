@@ -27684,10 +27684,10 @@
     ],
     "servings": 1,
     "nutrition": {
-      "kcal": 87.4,
-      "protein_g": 7.4,
+      "kcal": 384.4,
+      "protein_g": 63.2,
       "carbs_g": 13.5,
-      "fat_g": 0.7
+      "fat_g": 7.2
     },
     "ingredients": [
       {
@@ -42431,10 +42431,10 @@
     ],
     "servings": 6,
     "nutrition": {
-      "kcal": 44.0,
-      "protein_g": 48.0,
-      "carbs_g": 36.0,
-      "fat_g": 3.0
+      "kcal": 520.0,
+      "protein_g": 40.0,
+      "carbs_g": 38.0,
+      "fat_g": 22.0
     },
     "ingredients": [
       {
@@ -42443,26 +42443,47 @@
         "unit": "g"
       },
       {
+        "name": "onion sliced",
+        "quantity": 150.0,
+        "unit": "g"
+      },
+      {
+        "name": "carrots sliced",
+        "quantity": 150.0,
+        "unit": "g"
+      },
+      {
         "name": "ale",
         "quantity": 200.0,
-        "unit": "g"
+        "unit": "ml"
       },
       {
         "name": "beef stock",
         "quantity": 400.0,
+        "unit": "ml"
+      },
+      {
+        "name": "cornflour",
+        "quantity": 15.0,
         "unit": "g"
       },
       {
-        "name": "pastry top bake 1.5–2 hours until tender serve",
+        "name": "shortcrust pastry",
         "quantity": 300.0,
         "unit": "g"
       }
     ],
     "instructions": [
-      "720.0"
+      "Preheat the oven to 180C.",
+      "In a large pan, sear the beef stewing steak over high heat until browned on all sides.",
+      "Add the sliced onion and carrots and cook for 4-5 minutes until softened.",
+      "Stir in the ale and beef stock, bring to a simmer, then cover and cook gently for 45-60 minutes until the beef is tender.",
+      "Mix the cornflour with a little cold water to make a slurry, stir into the sauce and simmer until thickened.",
+      "Transfer the beef mixture to an ovenproof dish and top with the shortcrust pastry, crimping the edges and cutting a small steam hole in the centre.",
+      "Bake for 25-30 minutes until the pastry is golden and crisp. Rest briefly before serving."
     ],
-    "prepTime": 10,
-    "cookTime": 15,
+    "prepTime": 20,
+    "cookTime": 90,
     "image": null,
     "steps": []
   },
@@ -42479,10 +42500,10 @@
     ],
     "servings": 4,
     "nutrition": {
-      "kcal": 10.0,
-      "protein_g": 48.0,
-      "carbs_g": 18.0,
-      "fat_g": 10.0
+      "kcal": 320.0,
+      "protein_g": 10.0,
+      "carbs_g": 42.0,
+      "fat_g": 11.0
     },
     "ingredients": [
       {
@@ -42492,30 +42513,60 @@
       },
       {
         "name": "olive oil",
-        "quantity": 15.0,
+        "quantity": 20.0,
         "unit": "ml"
       },
       {
-        "name": "spices roast 25 minutes",
+        "name": "smoked paprika",
+        "quantity": 2.0,
+        "unit": "tsp"
+      },
+      {
+        "name": "ground cumin",
         "quantity": 1.0,
-        "unit": ""
+        "unit": "tsp"
       },
       {
-        "name": "tortillas",
+        "name": "garlic powder",
+        "quantity": 1.0,
+        "unit": "tsp"
+      },
+      {
+        "name": "salt",
+        "quantity": 0.5,
+        "unit": "tsp"
+      },
+      {
+        "name": "corn tortillas",
         "quantity": 8.0,
-        "unit": "corn"
+        "unit": "pc"
       },
       {
-        "name": "avocado mash assemble and serve",
-        "quantity": 50.0,
+        "name": "avocado",
+        "quantity": 80.0,
+        "unit": "g"
+      },
+      {
+        "name": "lime",
+        "quantity": 1.0,
+        "unit": "pc"
+      },
+      {
+        "name": "fresh coriander",
+        "quantity": 10.0,
         "unit": "g"
       }
     ],
     "instructions": [
-      "380.0"
+      "Preheat the oven to 200C.",
+      "Toss the cauliflower florets with olive oil, smoked paprika, ground cumin, garlic powder and salt until evenly coated.",
+      "Spread the cauliflower on a baking tray and roast for 20-25 minutes, turning once, until golden and tender.",
+      "Warm the corn tortillas in a dry pan or low oven.",
+      "Mash the avocado with a squeeze of lime juice and a pinch of salt.",
+      "Fill each tortilla with roasted cauliflower, mashed avocado and fresh coriander, then serve with extra lime wedges."
     ],
-    "prepTime": 10,
-    "cookTime": 15,
+    "prepTime": 15,
+    "cookTime": 25,
     "image": null,
     "steps": []
   },
@@ -42531,10 +42582,10 @@
     ],
     "servings": 6,
     "nutrition": {
-      "kcal": 36.0,
-      "protein_g": 44.0,
-      "carbs_g": 24.0,
-      "fat_g": 2.5
+      "kcal": 480.0,
+      "protein_g": 38.0,
+      "carbs_g": 32.0,
+      "fat_g": 18.0
     },
     "ingredients": [
       {
@@ -42548,21 +42599,42 @@
         "unit": "g"
       },
       {
+        "name": "olive oil",
+        "quantity": 10.0,
+        "unit": "ml"
+      },
+      {
         "name": "light cream",
         "quantity": 200.0,
+        "unit": "ml"
+      },
+      {
+        "name": "chicken stock",
+        "quantity": 200.0,
+        "unit": "ml"
+      },
+      {
+        "name": "cornflour",
+        "quantity": 15.0,
         "unit": "g"
       },
       {
-        "name": "shortcrust pastry top bake 35–40 minutes serve",
+        "name": "shortcrust pastry",
         "quantity": 300.0,
         "unit": "g"
       }
     ],
     "instructions": [
-      "560.0"
+      "Preheat the oven to 180C.",
+      "Heat the olive oil in a large pan and cook the diced chicken for 5-6 minutes until sealed all over.",
+      "Add the sliced leeks and cook for a further 4-5 minutes until softened.",
+      "Pour in the chicken stock and light cream, bring to a gentle simmer.",
+      "Mix the cornflour with a little cold water to make a slurry, stir into the pan and cook until the sauce thickens.",
+      "Transfer the chicken and leek mixture to an ovenproof dish and top with the shortcrust pastry, sealing the edges and cutting a small steam hole.",
+      "Bake for 25-30 minutes until the pastry is golden and the filling is bubbling at the edges."
     ],
-    "prepTime": 10,
-    "cookTime": 15,
+    "prepTime": 20,
+    "cookTime": 60,
     "image": null,
     "steps": []
   },
@@ -42579,10 +42651,10 @@
     ],
     "servings": 6,
     "nutrition": {
-      "kcal": 12.0,
-      "protein_g": 84.0,
-      "carbs_g": 12.0,
-      "fat_g": 8.0
+      "kcal": 380.0,
+      "protein_g": 9.0,
+      "carbs_g": 72.0,
+      "fat_g": 5.0
     },
     "ingredients": [
       {
@@ -42596,21 +42668,46 @@
         "unit": "ml"
       },
       {
-        "name": "mixed veg",
+        "name": "mixed vegetables",
         "quantity": 300.0,
         "unit": "g"
       },
       {
-        "name": "spices cook 20–25 minutes serve with raita optional",
-        "quantity": 1.0,
-        "unit": ""
+        "name": "onion sliced",
+        "quantity": 150.0,
+        "unit": "g"
+      },
+      {
+        "name": "garlic",
+        "quantity": 2.0,
+        "unit": "cloves"
+      },
+      {
+        "name": "curry powder",
+        "quantity": 2.0,
+        "unit": "tsp"
+      },
+      {
+        "name": "ground turmeric",
+        "quantity": 0.5,
+        "unit": "tsp"
+      },
+      {
+        "name": "olive oil",
+        "quantity": 10.0,
+        "unit": "ml"
       }
     ],
     "instructions": [
-      "480.0"
+      "Rinse the basmati rice under cold water until the water runs clear.",
+      "Heat the olive oil in a large pan and cook the sliced onion for 5 minutes until softened, then add the crushed garlic and cook for 1 minute.",
+      "Stir in the curry powder and ground turmeric and cook for 1 minute until fragrant.",
+      "Add the basmati rice and mixed vegetables to the pan, stirring to coat in the spices.",
+      "Pour in the vegetable stock, bring to the boil, then reduce the heat to low, cover with a lid and simmer for 15-18 minutes until the rice is tender and the liquid is absorbed.",
+      "Remove from the heat and leave to steam for 5 minutes before fluffing up the rice with a fork and serving."
     ],
-    "prepTime": 10,
-    "cookTime": 15,
+    "prepTime": 15,
+    "cookTime": 25,
     "image": null,
     "steps": []
   },
