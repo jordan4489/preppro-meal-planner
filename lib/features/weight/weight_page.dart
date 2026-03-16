@@ -158,6 +158,23 @@ class _WeightProgressCardState extends State<_WeightProgressCard> {
     final profile = await ProfileService.loadProfile();
     setState(() => targetWeight = profile?.targetWeightKg);
   }
+
+  double _computeProgress({
+    required double startWeight,
+    required double currentWeight,
+    required double targetWeight,
+  }) {
+    final denom = startWeight - targetWeight;
+    if (denom.abs() < 1e-6) {
+      // Avoid 0/0 → NaN when start and target are effectively the same
+      return currentWeight >= targetWeight ? 1.0 : 0.0;
+    }
+    final raw = (startWeight - currentWeight) / denom;
+    if (raw.isNaN || raw.isInfinite) {
+      return 0.0;
+    }
+    return raw.clamp(0.0, 1.0);
+  }
   
   @override
   Widget build(BuildContext context) {
@@ -231,7 +248,11 @@ class _WeightProgressCardState extends State<_WeightProgressCard> {
             if (targetWeight != null) ...[
               const SizedBox(height: 16),
               LinearProgressIndicator(
-                value: ((startWeight - currentWeight) / (startWeight - targetWeight!)).clamp(0.0, 1.0),
+                value: _computeProgress(
+                  startWeight: startWeight,
+                  currentWeight: currentWeight,
+                  targetWeight: targetWeight!,
+                ),
                 minHeight: 8,
                 borderRadius: BorderRadius.circular(4),
               ),
