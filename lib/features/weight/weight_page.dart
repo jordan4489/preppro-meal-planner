@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../../core/services/weight_service.dart';
 import '../../core/services/profile_service.dart';
 
@@ -25,6 +26,7 @@ class _S extends State<WeightPage> {
 
   Future<void> _load() async {
     final list = await WeightService.load();
+    if (!mounted) return;
     setState(() => _entries = list);
   }
 
@@ -38,6 +40,7 @@ class _S extends State<WeightPage> {
     setState(() => _saving = true);
     await WeightService.add(WeightEntry(date: _today(), weightKg: v));
     await _load();
+    if (!mounted) return;
     setState(() => _saving = false);
     _controller.clear();
   }
@@ -48,7 +51,7 @@ class _S extends State<WeightPage> {
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.of(context).pop(),
+          onPressed: () => context.go('/home'),
         ),
         title: const Text('Weight tracker'),
       ),
@@ -156,6 +159,7 @@ class _WeightProgressCardState extends State<_WeightProgressCard> {
   
   Future<void> _loadTarget() async {
     final profile = await ProfileService.loadProfile();
+    if (!mounted) return;
     setState(() => targetWeight = profile?.targetWeightKg);
   }
 
