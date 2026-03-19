@@ -109,4 +109,22 @@ class AuthProvider extends ChangeNotifier {
     }
     notifyListeners();
   }
+
+  /// Delete the currently logged-in user's account from Firebase Auth.
+  ///
+  /// This only handles the remote account. Local app data is wiped by
+  /// the caller (e.g. profile page) after a successful deletion.
+  Future<void> deleteAccount() async {
+    _isLoading = true;
+    _error = null;
+    notifyListeners();
+
+    final error = await AuthService.deleteAccount();
+
+    _isLoading = false;
+    if (error != null) {
+      _error = error;
+    }
+    notifyListeners();
+  }
 }

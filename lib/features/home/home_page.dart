@@ -7,6 +7,7 @@ import '../../core/services/profile_service.dart';
 import '../../core/models/profile.dart';
 import 'package:provider/provider.dart';
 import '../../core/providers/auth_provider.dart';
+import '../../core/services/data_wipe_service.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -16,7 +17,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-    bool _showQuickStart = true;
+  bool _showQuickStart = true;
 
   @override
   void initState() {
@@ -51,16 +52,41 @@ class _HomePageState extends State<HomePage> {
             final version = snap.data == null
                 ? 'Loading…'
                 : '${snap.data!.version}+${snap.data!.buildNumber}';
-            return Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text('Terms (short): Use the app responsibly. Meal plans are informational and not medical advice. Calorie estimates are approximate.'),
-                const SizedBox(height: 12),
-                const Text('Copyright: © 2026 PrepPro. All app content, recipes, and branding are protected. No reuse without permission.'),
-                const SizedBox(height: 12),
-                Text('App version: $version'),
-              ],
+            return SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('Terms (short): Use the app responsibly. Meal plans are informational and not medical advice. Calorie estimates are approximate.'),
+                  const SizedBox(height: 12),
+                  const Text('Copyright: © 2026 PrepPro. All app content, recipes, and branding are protected. No reuse without permission.'),
+                  const SizedBox(height: 12),
+                  Text('App version: $version'),
+                  const SizedBox(height: 16),
+                  const Divider(),
+                  const SizedBox(height: 8),
+                  const Text(
+                    'Account & data',
+                    style: TextStyle(fontWeight: FontWeight.w600),
+                  ),
+                  const SizedBox(height: 6),
+                  const Text(
+                    'You can permanently delete your PrepPro account and clear all saved data from this device. This cannot be undone.',
+                  ),
+                  const SizedBox(height: 8),
+                  TextButton.icon(
+                    icon: const Icon(Icons.delete_forever, color: Colors.red),
+                    label: const Text(
+                      'Delete account',
+                      style: TextStyle(color: Colors.red),
+                    ),
+                    onPressed: () {
+                      Navigator.pop(dialogContext);
+                      _confirmDeleteAccount(context);
+                    },
+                  ),
+                ],
+              ),
             );
           },
         ),
@@ -69,6 +95,52 @@ class _HomePageState extends State<HomePage> {
         ],
       ),
     );
+  }
+
+  Future<void> _confirmDeleteAccount(BuildContext context) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Delete account?'),
+        content: const Text(
+          'This will permanently delete your PrepPro account and clear your profile, plans, weights, favourites, and preferences from this device. This action cannot be undone.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(true),
+            style: TextButton.styleFrom(foregroundColor: Colors.red),
+            child: const Text('Delete account'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed != true || !mounted) return;
+
+    final auth = context.read<AuthProvider>();
+
+    await auth.deleteAccount();
+    if (!mounted) return;
+
+    if (auth.error != null) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(auth.error!)));
+      return;
+    }
+
+    await DataWipeService.wipeAllLocal();
+
+    if (!mounted) return;
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Account and local data deleted')),
+    );
+
+    context.go('/login');
   }
 
   void _openTab(BuildContext context, String tab) {

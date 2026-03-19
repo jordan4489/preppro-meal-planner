@@ -116,6 +116,8 @@ class _ProfilePageState extends State<ProfilePage> {
     super.dispose();
   }
 
+  // Account deletion is now surfaced from the About section on the Home page.
+
   @override
   Widget build(BuildContext context) {
     final daily = _profile.computeDailyTarget();

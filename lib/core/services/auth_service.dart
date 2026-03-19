@@ -108,4 +108,34 @@ class AuthService {
       return 'Update failed: $e';
     }
   }
+
+  /// Permanently delete the current user's account from Firebase Auth
+  /// and remove their top-level user document in Firestore.
+  ///
+  /// Returns `null` on success or an error message on failure.
+  static Future<String?> deleteAccount() async {
+    final user = _auth.currentUser;
+    if (user == null) {
+      return 'No user is currently logged in.';
+    }
+
+    try {
+      // Best-effort: delete the Firestore user document if it exists.
+      try {
+        await _firestore.collection('users').doc(user.uid).delete();
+      } catch (e) {
+        debugPrint('Failed to delete Firestore user doc: $e');
+      }
+
+      await user.delete().timeout(const Duration(seconds: 30));
+      return null;
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'requires-recent-login') {
+        return 'For security, please sign in again before deleting your account.';
+      }
+      return e.message ?? 'Account deletion failed.';
+    } catch (e) {
+      return 'Account deletion failed: $e';
+    }
+  }
 }
